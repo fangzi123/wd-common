@@ -50,9 +50,14 @@ public class DaoPlugin extends PluginAdapter {
         superClass.addTypeArgument(introspectedTable.getPrimaryKeyColumns().get(0).getFullyQualifiedJavaType());
 
         Method method = new Method();
+        method.setVisibility(JavaVisibility.PUBLIC);
+        method.addAnnotation("@Override");
         method.setName("getBeanClass");
+        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("java.lang.Class");
+        returnType.addTypeArgument(new FullyQualifiedJavaType(domainObjectName));
+        method.setReturnType(returnType);
+        method.addBodyLine("return " + domainObjectName + ".class;");
         method.setReturnType(new FullyQualifiedJavaType("java.lang.Class"));
-
         compilationUnit.addMethod(method);
 
         compilationUnit.addImportedType("org.springframework.stereotype.Repository");
