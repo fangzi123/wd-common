@@ -14,6 +14,7 @@
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
 
         <wd-dependencies.version>1.0.0-SNAPSHOT</wd-dependencies.version>
@@ -53,7 +54,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <!--<release>${java.version}</release>-->
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <!--<arg>-verbose</arg>-->
