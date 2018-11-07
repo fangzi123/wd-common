@@ -16,7 +16,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
 
-        <wd-dependencies.version>1.0.0</wd-dependencies.version>
+        <wd-dependencies.version>1.0.0-SNAPSHOT</wd-dependencies.version>
     </properties>
     <modules>
         <module>common-dependencies</module>
@@ -41,12 +41,21 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <!--<arg>-verbose</arg>-->
@@ -70,15 +79,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
+                <version>2.22.1</version>
                 <configuration>
                     <skip>true</skip>
+                    <!--illegal-access=permit以允许第三方库的所有反射访问-->
+                    <!--<argLine>-->
+                        <!--&#45;&#45;illegal-access=permit-->
+                    <!--</argLine>-->
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.5</version>
             </plugin>
         </plugins>
     </build>
