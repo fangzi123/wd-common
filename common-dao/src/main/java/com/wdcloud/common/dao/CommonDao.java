@@ -14,6 +14,7 @@ import java.util.List;
  * @param <BeanType> 实体类型
  * @param <IdType> 实体ID类型
  */
+
 public abstract class CommonDao<BeanType, IdType> {
     @Autowired(required = false)
     protected Mapper<BeanType> mapper;
