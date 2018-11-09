@@ -1,6 +1,7 @@
 package com.wdcloud.mybatis.plugins;
 
 import org.mybatis.generator.api.GeneratedJavaFile;
+import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.DefaultJavaFormatter;
@@ -47,12 +48,29 @@ public class DaoPlugin extends PluginAdapter {
         FullyQualifiedJavaType superClass = new FullyQualifiedJavaType(parentClass);
         superClass.addTypeArgument(new FullyQualifiedJavaType(domainObjectName));
 
-        superClass.addTypeArgument(introspectedTable.getPrimaryKeyColumns().get(0).getFullyQualifiedJavaType());
+
+        IntrospectedColumn primaryKeyColumn = null;
+        List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
+        for (IntrospectedColumn column : allColumns) {
+            if (column.isIdentity()) {
+                primaryKeyColumn = column;
+                break;
+            }
+        }
+        if (primaryKeyColumn == null) {
+            throw new RuntimeException("Table primary key is not exists.");
+        }
+        superClass.addTypeArgument(primaryKeyColumn.getFullyQualifiedJavaType());
 
         Method method = new Method();
+        method.setVisibility(JavaVisibility.PUBLIC);
+        method.addAnnotation("@Override");
         method.setName("getBeanClass");
+        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("java.lang.Class");
+        returnType.addTypeArgument(new FullyQualifiedJavaType(domainObjectName));
+        method.setReturnType(returnType);
+        method.addBodyLine("return " + domainObjectName + ".class;");
         method.setReturnType(new FullyQualifiedJavaType("java.lang.Class"));
-
         compilationUnit.addMethod(method);
 
         compilationUnit.addImportedType("org.springframework.stereotype.Repository");
