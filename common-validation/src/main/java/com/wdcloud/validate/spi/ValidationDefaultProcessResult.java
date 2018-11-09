@@ -14,7 +14,7 @@ public class ValidationDefaultProcessResult implements IValidationProcessResult 
     }
 
     private String getValidateResult(List<ValidateResult> vrList) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (ValidateResult vr : vrList) {
             result.append(vr.getMsgKey()).append(":").append(vr.getMsgBody()).append(";");
         }
