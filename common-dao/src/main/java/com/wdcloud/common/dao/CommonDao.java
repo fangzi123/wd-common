@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public abstract class CommonDao<BeanType, IdType> {
-    @Autowired(required = false)
+    @Autowired
     protected Mapper<BeanType> mapper;
 
     public int save(BeanType record) {
