@@ -4,6 +4,7 @@ import com.wdcloud.validate.spi.IValidationProcessResult;
 import com.wdcloud.validate.spi.ValidationDefaultProcessResult;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,12 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
 @ComponentScan("com.wdcloud.validate")
+@ConditionalOnProperty(
+    prefix = "validate",
+    name = "enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
 public class ValidateAutoConfiguration {
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean() {
