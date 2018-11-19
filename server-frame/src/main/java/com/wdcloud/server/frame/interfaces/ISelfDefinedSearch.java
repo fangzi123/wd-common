@@ -1,5 +1,7 @@
 package com.wdcloud.server.frame.interfaces;
 
+import com.wdcloud.server.frame.exception.ResourceOpeartorUnsupportedException;
+
 import java.util.Map;
 
 /**
@@ -15,5 +17,5 @@ public interface ISelfDefinedSearch<T> {
      * @param condition 条件（条件和前端约定)
      * @return 返回结果
      */
-    T search(Map<String, String> condition);
+    default T search(Map<String, String> condition) { throw new ResourceOpeartorUnsupportedException(); }
 }

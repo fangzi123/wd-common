@@ -1,5 +1,6 @@
 package com.wdcloud.server.frame.interfaces;
 
+import com.wdcloud.server.frame.exception.ResourceOpeartorUnsupportedException;
 import com.wdcloud.server.frame.interfaces.info.LinkedInfo;
 
 /**
@@ -15,5 +16,5 @@ public interface IDataLinkedHandle {
      *
      * @param linkedInfo 联动消息
      */
-    LinkedInfo linkedHandle(LinkedInfo linkedInfo);
+    default LinkedInfo linkedHandle(LinkedInfo linkedInfo) { throw new ResourceOpeartorUnsupportedException(); }
 }

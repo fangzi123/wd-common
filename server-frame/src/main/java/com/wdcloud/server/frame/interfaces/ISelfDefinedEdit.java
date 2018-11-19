@@ -1,5 +1,6 @@
 package com.wdcloud.server.frame.interfaces;
 
+import com.wdcloud.server.frame.exception.ResourceOpeartorUnsupportedException;
 import com.wdcloud.server.frame.interfaces.info.DataEditInfo;
 import com.wdcloud.server.frame.interfaces.info.LinkedInfo;
 
@@ -16,5 +17,5 @@ public interface ISelfDefinedEdit {
      * @param dataEditInfo 数据更新时所需要信息
      * @return 返回结果
      */
-    LinkedInfo edit(DataEditInfo dataEditInfo);
+    default LinkedInfo edit(DataEditInfo dataEditInfo) { throw new ResourceOpeartorUnsupportedException(); }
 }

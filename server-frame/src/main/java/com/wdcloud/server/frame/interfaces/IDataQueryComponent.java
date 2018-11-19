@@ -1,5 +1,6 @@
 package com.wdcloud.server.frame.interfaces;
 
+import com.wdcloud.server.frame.exception.ResourceOpeartorUnsupportedException;
 import com.wdcloud.server.frame.interfaces.info.PageQueryResult;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface IDataQueryComponent<T> {
      * @param param 条件（条件和前端约定)
      * @return 查询列表
      */
-    List<? extends T> list(Map<String, String> param);
+    default List<? extends T> list(Map<String, String> param) { throw new ResourceOpeartorUnsupportedException(); }
 
     /**
      * 分页查询
@@ -29,7 +30,7 @@ public interface IDataQueryComponent<T> {
      * @param pageSize  每页显示多少条
      * @return 分页信息和列表
      */
-    PageQueryResult<? extends T> pageList(Map<String, String> param, int pageIndex, int pageSize);
+    default PageQueryResult<? extends T> pageList(Map<String, String> param, int pageIndex, int pageSize) { throw new ResourceOpeartorUnsupportedException(); }
 
     /**
      * 根据ID查询
@@ -37,6 +38,6 @@ public interface IDataQueryComponent<T> {
      * @param id ID
      * @return 返回对象
      */
-    T find(String id);
+    default T find(String id) { throw new ResourceOpeartorUnsupportedException(); }
 
 }
