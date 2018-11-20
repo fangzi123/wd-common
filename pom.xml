@@ -27,6 +27,7 @@
         <module>common-validation</module>
         <module>server-frame</module>
         <module>common-dao</module>
+        <module>common-mq-model</module>
     </modules>
     <dependencyManagement>
         <dependencies>
