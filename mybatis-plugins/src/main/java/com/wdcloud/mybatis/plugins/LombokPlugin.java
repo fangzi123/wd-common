@@ -14,7 +14,6 @@ import java.util.Properties;
  * <p>
  * 在jdk 9 以上，存在BUG
  */
-@Deprecated
 public class LombokPlugin extends PluginAdapter {
     private boolean equalsAndHashCode = false;
     private boolean toString = false;
