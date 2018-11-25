@@ -2,7 +2,6 @@ package com.wdcloud.mybatis.plugins;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.Plugin;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
@@ -12,10 +11,7 @@ import java.util.Properties;
 
 /**
  * lombok 插件
- * <p>
- * 在jdk 9 以上，存在BUG
  */
-@Deprecated
 public class LombokPlugin extends PluginAdapter {
     private boolean equalsAndHashCode = false;
     private boolean toString = false;
