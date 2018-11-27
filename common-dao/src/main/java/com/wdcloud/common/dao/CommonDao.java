@@ -180,5 +180,9 @@ public abstract class CommonDao<BeanType, IdType> {
         return new Example(getBeanClass());
     }
 
+    public Example.Criteria getCriteria() {
+        return getExample().createCriteria();
+    }
+
     abstract protected Class<BeanType> getBeanClass();
 }
