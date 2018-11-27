@@ -14,7 +14,7 @@ import java.util.List;
 public class ImportExcelTest {
     @Test
     public void testExcelImport() throws IOException {
-        String fileName = "D:\\opt\\upfile\\tmp\\db73cc16-652e-46fb-a5da-2f5e0750fae3.xls";
+        String fileName = "C:/Users/zz/Downloads/teacher_import_en.xlsx";
 
         File file = new File(fileName);
 
@@ -26,12 +26,16 @@ public class ImportExcelTest {
     @Data
 
     public static class VO {
-        @ExcelField(name = "教师编号")
+        @ExcelField(name = "*教师编号", alias = {"*Teacher ID"})
         private String no;
-        @ExcelField(name = "姓名")
+        @ExcelField(name = "*姓名", alias = {"*Name"})
         private String name;
-        @ExcelField(name = "邮箱")
+        @ExcelField(name = "邮箱", alias = {"Email"})
         private String email;
+        @ExcelField(name = "联系电话", alias = {"Contact Number"})
+        private String phone;
+        @ExcelField(name = "学科", alias = {"Subject"})
+        private String subject;
     }
 
     public static void main(String[] args) throws Exception {
