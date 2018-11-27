@@ -6,8 +6,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -152,9 +157,11 @@ public class HttpClientUtils {
             logger.debug("Http get request complete, response={}", result);
         } catch (Exception e) {
             logger.warn("Http get catch an exception, error={}", e.getMessage(), e);
-        }finally {
+        } finally {
             try {
-                if (in != null) {in.close();}
+                if (in != null) {
+                    in.close();
+                }
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
@@ -162,7 +169,7 @@ public class HttpClientUtils {
         return result;
     }
 
-    public static String sentPost(Map<String, String> reqData, String uriAPI, String encoding){
+    public static String sentPost(Map<String, String> reqData, String uriAPI, String encoding) {
         String result = "";
         try {
             HttpPost httpRequst = new HttpPost(uriAPI);
@@ -173,26 +180,54 @@ public class HttpClientUtils {
             httpRequst.setEntity(new UrlEncodedFormEntity(params, encoding));
 
             RequestConfig requestConfig = RequestConfig.custom()
-                                                    .setSocketTimeout(15000)
-                                                    .setConnectTimeout(3000)
-                                                    .build();
+                    .setSocketTimeout(15000)
+                    .setConnectTimeout(3000)
+                    .build();
 //          HttpClient httpclient = HttpClients.createDefault();
             HttpClient httpclient = HttpClients.custom()
-                                                    .setDefaultRequestConfig(requestConfig)
-                                                    .build();
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
 
             HttpResponse httpResponse = httpclient.execute(httpRequst);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if(statusCode == 200){
+            if (statusCode == 200) {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 result = EntityUtils.toString(httpEntity, encoding);
             }
             logger.debug("Http post request complete, status={}, response={}", statusCode, result);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.warn("Http post request catch exception, err={}", e.getMessage(), e);
             result = null;
         }
         return result;
+    }
+
+    public static String upload(String uriAPI, InputStream inputStream, String fileName) {
+        String result = "";
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(3000).build();
+        HttpPost httpPost = new HttpPost(uriAPI);
+        httpPost.setConfig(requestConfig);
+        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        multipartEntityBuilder.setCharset(Charset.forName("UTF-8"));
+        multipartEntityBuilder.addBinaryBody("file", inputStream, ContentType.MULTIPART_FORM_DATA, fileName);
+        HttpEntity httpEntity = multipartEntityBuilder.build();
+        httpPost.setEntity(httpEntity);
+        CloseableHttpResponse httpResponse;
+        try {
+            httpResponse = httpClient.execute(httpPost);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                HttpEntity responseEntity = httpResponse.getEntity();
+                result = EntityUtils.toString(responseEntity, "UTF-8");
+            }
+            httpClient.close();
+            httpResponse.close();
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getResponseContentCharsetName(HttpResponse response) {

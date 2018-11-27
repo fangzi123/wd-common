@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
+            <artifactId>httpmime</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
