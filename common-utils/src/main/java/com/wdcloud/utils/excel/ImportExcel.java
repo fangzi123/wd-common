@@ -4,7 +4,7 @@ package com.wdcloud.utils.excel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.wdcloud.utils.excel.annotation.ExcelField;
-import com.wdcloud.utils.exception.ExcelHeaderFormatException;
+import com.wdcloud.utils.exception.ExcelTemplateFormatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -314,7 +314,7 @@ public class ImportExcel {
             }
 
             if (!flag) {
-                throw new ExcelHeaderFormatException();
+                throw new ExcelTemplateFormatException();
             }
         }
     }
