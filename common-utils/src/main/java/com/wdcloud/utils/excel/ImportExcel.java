@@ -294,26 +294,31 @@ public class ImportExcel {
 
     private <T> void checkHeader(List<Tuple<ExcelField, Field>> annotationList, Row headerRow) {
         for (int i = 0; i < annotationList.size(); i++) {
-            Tuple<ExcelField, Field> tuple = annotationList.get(i);
-            ExcelField excelField = tuple.getA();
-            Field field = tuple.getB();
+            try {
+                Tuple<ExcelField, Field> tuple = annotationList.get(i);
+                ExcelField excelField = tuple.getA();
+                Field field = tuple.getB();
 
-            String columnName = headerRow.getCell(i).getStringCellValue();
-            boolean flag = false;
-            if (Objects.equals(columnName, excelField.name())) {
-                flag = true;
-            }
-            String[] alias = excelField.alias();
-            if (!flag && alias != null) {
-                for (int j = 0; j < alias.length; j++) {
-                    if (alias[j] != null && alias[j].equalsIgnoreCase(columnName)) {
-                        flag = true;
-                        break;
+                String columnName = headerRow.getCell(i).getStringCellValue();
+                boolean flag = false;
+                if (Objects.equals(columnName, excelField.name())) {
+                    flag = true;
+                }
+                String[] alias = excelField.alias();
+                if (!flag && alias != null) {
+                    for (int j = 0; j < alias.length; j++) {
+                        if (alias[j] != null && alias[j].equalsIgnoreCase(columnName)) {
+                            flag = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!flag) {
+                if (!flag) {
+                    throw new ExcelTemplateFormatException();
+                }
+            } catch (Exception e) {
+                log.error("Excel template check header exception", e);
                 throw new ExcelTemplateFormatException();
             }
         }
