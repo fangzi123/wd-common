@@ -11,8 +11,6 @@ import java.util.Properties;
 
 /**
  * lombok 插件
- * <p>
- * 在jdk 9 以上，存在BUG
  */
 public class LombokPlugin extends PluginAdapter {
     private boolean equalsAndHashCode = false;
