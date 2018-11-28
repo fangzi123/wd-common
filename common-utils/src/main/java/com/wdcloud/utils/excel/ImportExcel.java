@@ -3,6 +3,7 @@ package com.wdcloud.utils.excel;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.wdcloud.utils.StringUtil;
 import com.wdcloud.utils.excel.annotation.ExcelField;
 import com.wdcloud.utils.exception.ExcelTemplateFormatException;
 import lombok.AllArgsConstructor;
@@ -243,6 +244,7 @@ public class ImportExcel {
             }
             int column = 0;
             Row row = this.getRow(i);
+            boolean allNull = true;
             for (Tuple<ExcelField, Field> tuple : annotationList) {
                 Object val = this.getCellValue(row, column++);
                 if (val != null) {
@@ -261,6 +263,9 @@ public class ImportExcel {
                                     val = String.valueOf(val.toString());
                                 }
                             }
+                            if (StringUtil.isEmpty((String) val)) {
+                                val = null;
+                            }
                         } else if (valType == Integer.class) {
                             val = Double.valueOf(val.toString()).intValue();
                         } else if (valType == Long.class) {
@@ -276,11 +281,17 @@ public class ImportExcel {
                         log.info("Get cell value [" + i + "," + column + "] error: ", Throwables.getStackTraceAsString(ex));
                         val = null;
                     }
+
+                    if (allNull && val != null) {
+                        allNull = false;
+                    }
                     // set entity value
                     Reflections.invokeSetter(e, tuple.getB().getName(), val);
                 }
             }
-            dataList.add(e);
+            if (!allNull) {
+                dataList.add(e);
+            }
         }
         return dataList;
     }
