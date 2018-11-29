@@ -39,7 +39,7 @@ public class MagicQueryController extends BaseController {
      * @param request request
      * @return 查询结果
      */
-    @GetMapping(value = "{path1}/", produces = {"application/javascript", "application/json"})
+    @GetMapping(value = "{path1}", produces = {"application/javascript", "application/json"})
     public String magicQuery(@PathVariable(value = "path1", required = false) String path1,
                              HttpServletRequest request) {
 
