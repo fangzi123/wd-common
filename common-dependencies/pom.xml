@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.wdcloud</groupId>
         <artifactId>wd-common</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>common-dependencies</artifactId>
@@ -45,6 +45,11 @@
             <dependency>
                 <groupId>com.wdcloud</groupId>
                 <artifactId>server-frame</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wdcloud</groupId>
+                <artifactId>common-mq-model</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
         </dependencies>

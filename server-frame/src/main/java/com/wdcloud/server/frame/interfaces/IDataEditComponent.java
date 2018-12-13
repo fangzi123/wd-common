@@ -1,6 +1,7 @@
 package com.wdcloud.server.frame.interfaces;
 
 
+import com.wdcloud.server.frame.exception.ResourceOpeartorUnsupportedException;
 import com.wdcloud.server.frame.interfaces.info.DataEditInfo;
 import com.wdcloud.server.frame.interfaces.info.LinkedInfo;
 
@@ -18,19 +19,19 @@ public interface IDataEditComponent {
      * @param dataEditInfo 数据增加时所需要信息
      * @return 返回ID
      */
-    LinkedInfo add(DataEditInfo dataEditInfo);
+    default LinkedInfo add(DataEditInfo dataEditInfo) { throw new ResourceOpeartorUnsupportedException(); }
 
     /**
      * 修改/更新
      *
      * @param dataEditInfo 数据修改时所需要信息
      */
-    LinkedInfo update(DataEditInfo dataEditInfo);
+    default LinkedInfo update(DataEditInfo dataEditInfo) { throw new ResourceOpeartorUnsupportedException(); }
 
     /**
      * 根据ID删除
      *
      * @param dataEditInfo 数据删除时所需要信息
      */
-    LinkedInfo delete(DataEditInfo dataEditInfo);
+    default LinkedInfo delete(DataEditInfo dataEditInfo) { throw new ResourceOpeartorUnsupportedException(); }
 }

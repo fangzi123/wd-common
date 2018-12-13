@@ -3,7 +3,11 @@ package com.wdcloud.utils.excel;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.wdcloud.utils.StringUtil;
 import com.wdcloud.utils.excel.annotation.ExcelField;
+import com.wdcloud.utils.exception.ExcelTemplateFormatException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
@@ -20,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 导入Excel文件（支持“XLS”和“XLSX”格式）
@@ -213,17 +218,20 @@ public class ImportExcel {
      * @param cls 导入对象类型
      */
     public <E> List<E> getDataList(Class<E> cls) {
-        List<Object[]> annotationList = Lists.newArrayList();
+        List<Tuple<ExcelField, Field>> annotationList = Lists.newArrayList();
         // Get annotation field
         Field[] fs = cls.getDeclaredFields();
         for (Field f : fs) {
             ExcelField ef = f.getAnnotation(ExcelField.class);
             if (ef != null && (ef.type() == 0 || ef.type() == 2)) {
-                annotationList.add(new Object[]{ef, f});
+                annotationList.add(new Tuple<>(ef, f));
             }
         }
         // Field sorting
-        annotationList.sort(Comparator.comparing(o -> (((ExcelField) o[0]).sort())));
+        annotationList.sort(Comparator.comparing(o -> (o.getA().sort())));
+
+        // 检查表头
+        checkHeader(annotationList, this.getRow(headerNum));
 
         // Get excel data
         List<E> dataList = Lists.newArrayList();
@@ -236,11 +244,12 @@ public class ImportExcel {
             }
             int column = 0;
             Row row = this.getRow(i);
-            for (Object[] os : annotationList) {
+            boolean allNull = true;
+            for (Tuple<ExcelField, Field> tuple : annotationList) {
                 Object val = this.getCellValue(row, column++);
                 if (val != null) {
                     // Get param type and type cast
-                    Class<?> valType = ((Field) os[1]).getType();
+                    Class<?> valType = tuple.getB().getType();
 
                     try {
                         if (valType == String.class) {
@@ -253,6 +262,9 @@ public class ImportExcel {
                                 } else {
                                     val = String.valueOf(val.toString());
                                 }
+                            }
+                            if (StringUtil.isEmpty((String) val)) {
+                                val = null;
                             }
                         } else if (valType == Integer.class) {
                             val = Double.valueOf(val.toString()).intValue();
@@ -269,12 +281,57 @@ public class ImportExcel {
                         log.info("Get cell value [" + i + "," + column + "] error: ", Throwables.getStackTraceAsString(ex));
                         val = null;
                     }
+
+                    if (allNull && val != null) {
+                        allNull = false;
+                    }
                     // set entity value
-                    Reflections.invokeSetter(e, ((Field) os[1]).getName(), val);
+                    Reflections.invokeSetter(e, tuple.getB().getName(), val);
                 }
             }
-            dataList.add(e);
+            if (!allNull) {
+                dataList.add(e);
+            }
         }
         return dataList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    private class Tuple<O, T> {
+        private O a;
+        private T b;
+    }
+
+    private <T> void checkHeader(List<Tuple<ExcelField, Field>> annotationList, Row headerRow) {
+        for (int i = 0; i < annotationList.size(); i++) {
+            try {
+                Tuple<ExcelField, Field> tuple = annotationList.get(i);
+                ExcelField excelField = tuple.getA();
+                Field field = tuple.getB();
+
+                String columnName = headerRow.getCell(i).getStringCellValue();
+                boolean flag = false;
+                if (Objects.equals(columnName, excelField.name())) {
+                    flag = true;
+                }
+                String[] alias = excelField.alias();
+                if (!flag && alias != null) {
+                    for (int j = 0; j < alias.length; j++) {
+                        if (alias[j] != null && alias[j].equalsIgnoreCase(columnName)) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!flag) {
+                    throw new ExcelTemplateFormatException();
+                }
+            } catch (Exception e) {
+                log.error("Excel template check header exception", e);
+                throw new ExcelTemplateFormatException();
+            }
+        }
     }
 }
