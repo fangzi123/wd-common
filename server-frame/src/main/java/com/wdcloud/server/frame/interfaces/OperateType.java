@@ -10,5 +10,5 @@ public enum OperateType {
     /**
      * 依次是：增加，修改，删除，批量删除
      */
-    ADD, EDIT, DELETE, DELETES;
+    ADD, EDIT, SELF_EDIT, DELETE;
 }

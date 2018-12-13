@@ -37,7 +37,7 @@ public class GlobalFactory {
     private final Map<String, IMagicQueryComponent> magicQueryComponentMap;
     private final Map<String, Map<String, ISelfDefinedSearch>> selfDefinedSearchMap;
     private final Map<String, Map<String, ISelfDefinedEdit>> selfDefinedEdit;
-    private final Map<String, Map<OperateType, List<IDataLinkedHandle>>> dataLinkedHandleMap;
+    private final Map<String, Map<OperateType, Map<String, List<IDataLinkedHandle>>>> dataLinkedHandleMap;
     private final Map<String, IFileManagerComponent> fileManagerComponentMap;
 
     private final Map<String, String> nameDescriptionMap;
@@ -145,28 +145,59 @@ public class GlobalFactory {
             for (IDataLinkedHandle dataLinkedHandle : dataLinkedHandles) {
                 //获取注解信息
                 LinkedHandler linkedHandler = AnnotationUtils.getAnnotation(dataLinkedHandle, LinkedHandler.class);
+
                 //当对象和注解信息不为空
                 if (dataLinkedHandle != null && linkedHandler != null) {
-                    if (dataLinkedHandleMap.containsKey(linkedHandler.dependResourceName())) {
-                        Map<OperateType, List<IDataLinkedHandle>> operateTypeListMap = dataLinkedHandleMap.get(linkedHandler.dependResourceName());
-                        List<IDataLinkedHandle> dataLinkedHandleList = operateTypeListMap.get(linkedHandler.operateType());
-                        if (dataLinkedHandleList != null && !dataLinkedHandleList.isEmpty()) {
-                            //如果原类别Map存在此操作类别的列表，在列表中增加即可
-                            dataLinkedHandleList.add(dataLinkedHandle);
-                        } else {
-                            //如果原类别Map中不存在，新增加此类别列表
-                            dataLinkedHandleList = new ArrayList<>();
-                            dataLinkedHandleList.add(dataLinkedHandle);
-                            operateTypeListMap.put(linkedHandler.operateType(), dataLinkedHandleList);
-                        }
-                    } else {
-                        //如果原资源类别Map中不存在，新增加此资源类别列表
-                        Map<OperateType, List<IDataLinkedHandle>> operateTypeListMap = new HashMap<>();
-                        List<IDataLinkedHandle> dataLinkedHandleList = new ArrayList<>();
-                        dataLinkedHandleList.add(dataLinkedHandle);
-                        operateTypeListMap.put(linkedHandler.operateType(), dataLinkedHandleList);
-                        dataLinkedHandleMap.put(linkedHandler.dependResourceName(), operateTypeListMap);
+
+                    OperateType operateType = linkedHandler.operateType();
+                    String dependResourceName = linkedHandler.dependResourceName();
+                    String dependFunctionName = linkedHandler.dependFunctionName();
+
+                    if (!dataLinkedHandleMap.containsKey(dependResourceName)) {
+                        dataLinkedHandleMap.put(dependResourceName, new HashMap<>());
                     }
+
+                    Map<OperateType, Map<String, List<IDataLinkedHandle>>> operateTypeListMap = dataLinkedHandleMap.get(dependResourceName);
+                    if (!operateTypeListMap.containsKey(operateType)) {
+                        operateTypeListMap.put(operateType, new HashMap<>());
+                    }
+                    Map<String, List<IDataLinkedHandle>> dataLinkedHandleFunMap = operateTypeListMap.get(operateType);
+                    if (!dataLinkedHandleFunMap.containsKey(dependFunctionName)) {
+                        dataLinkedHandleFunMap.put(dependFunctionName, new ArrayList<>());
+                    }
+                    dataLinkedHandleFunMap.get(dependFunctionName).add(dataLinkedHandle);
+//
+//                    if(true){
+//                        Map<OperateType, Map<String, List<IDataLinkedHandle>>> operateTypeListMap = dataLinkedHandleMap.get(dependResourceName);
+//                        Map<String, List<IDataLinkedHandle>> dataLinkedHandleFunMap = operateTypeListMap.get(operateType);
+//                        if (dataLinkedHandleFunMap == null) {
+//                            operateTypeListMap.put(operateType, new HashMap<>());
+//                            operateTypeListMap.get(operateType).put("", new ArrayList<>());
+//                            dataLinkedHandleFunMap = operateTypeListMap.get(operateType);
+//                        }
+//
+//                        if (!dataLinkedHandleFunMap.containsKey(dependFunctionName)) {
+//                            dataLinkedHandleFunMap.put(dependFunctionName, new ArrayList<>());
+//                        }
+//                        dataLinkedHandleFunMap.get(dependFunctionName).add(dataLinkedHandle);
+//
+////                        if (dataLinkedHandleFunMap != null && !dataLinkedHandleFunMap.isEmpty()) {
+////                            //如果原类别Map存在此操作类别的列表，在列表中增加即可
+////                            dataLinkedHandleFunMap.add(dataLinkedHandle);
+////                        } else {
+////                            //如果原类别Map中不存在，新增加此类别列表
+////                            dataLinkedHandleFunMap = new ArrayList<>();
+////                            dataLinkedHandleFunMap.add(dataLinkedHandle);
+////                            operateTypeListMap.put(operateType, dataLinkedHandleFunMap);
+////                        }
+//                    } else {
+//                        //如果原资源类别Map中不存在，新增加此资源类别列表
+//                        Map<OperateType, List<IDataLinkedHandle>> operateTypeListMap = new HashMap<>();
+//                        List<IDataLinkedHandle> dataLinkedHandleList = new ArrayList<>();
+//                        dataLinkedHandleList.add(dataLinkedHandle);
+//                        operateTypeListMap.put(operateType, dataLinkedHandleList);
+//                        dataLinkedHandleMap.put(dependResourceName, operateTypeListMap);
+//                    }
                 }
             }
         }
@@ -263,17 +294,17 @@ public class GlobalFactory {
      * @param operateType  操作类别
      * @return 联动接口实现列表
      */
-    public List<IDataLinkedHandle> getDataLinkedHandle(String resourceName, OperateType operateType) {
+    public List<IDataLinkedHandle> getDataLinkedHandle(String resourceName, String functionName, OperateType operateType) {
         if (StringUtil.isEmpty(resourceName) || null == operateType) {
             logger.warn("获取资源联动实现时 资源名称或操作类别不能为空");
             return new ArrayList<>();
         }
 
         if (dataLinkedHandleMap.containsKey(resourceName)) {
-            Map<OperateType, List<IDataLinkedHandle>> operateTypeListMap = dataLinkedHandleMap.get(resourceName);
+            Map<OperateType, Map<String, List<IDataLinkedHandle>>> operateTypeListMap = dataLinkedHandleMap.get(resourceName);
             if (operateTypeListMap.containsKey(operateType)) {
                 logger.debug("获取资源：{}   操作类别：{}  联动接口", resourceName, operateType);
-                return operateTypeListMap.get(operateType);
+                return operateTypeListMap.get(operateType).get(functionName);
             }
         }
         return new ArrayList<>();
