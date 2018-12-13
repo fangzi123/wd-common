@@ -17,15 +17,15 @@ public class MessageUtil {
         MessageUtil.messageSource = messageSource;
     }
 
-    public String getMessage(String key) {
+    public static String getMessage(String key) {
         return getMessage(key, LocaleContextHolder.getLocale());
     }
 
-    public String getMessage(String key, Locale locale) {
+    public static String getMessage(String key, Locale locale) {
         return getMessage(key, locale);
     }
 
-    public String getMessage(String key, Locale locale, String... args) {
+    public static String getMessage(String key, Locale locale, String... args) {
         try {
             return messageSource.getMessage(key, args, locale);
         } catch (NoSuchMessageException e) {
