@@ -34,7 +34,6 @@ public class GlobalFactory {
 
     private final Map<String, IDataEditComponent> dataEditComponentMap;
     private final Map<String, IDataQueryComponent> dataQueryComponentMap;
-    private final Map<String, IMagicQueryComponent> magicQueryComponentMap;
     private final Map<String, Map<String, ISelfDefinedSearch>> selfDefinedSearchMap;
     private final Map<String, Map<String, ISelfDefinedEdit>> selfDefinedEdit;
     private final Map<String, Map<OperateType, Map<String, List<IDataLinkedHandle>>>> dataLinkedHandleMap;
@@ -45,7 +44,6 @@ public class GlobalFactory {
     public GlobalFactory() {
         this.dataEditComponentMap = new HashMap<>();
         this.nameDescriptionMap = new HashMap<>();
-        this.magicQueryComponentMap = new HashMap<>();
         this.dataQueryComponentMap = new HashMap<>();
         this.selfDefinedSearchMap = new HashMap<>();
         this.selfDefinedEdit = new HashMap<>();
@@ -88,26 +86,6 @@ public class GlobalFactory {
                     //判断资源是否冲突
                     initResourceInfo(dataQueryComponentMap, info);
                     dataQueryComponentMap.put(info.name(), dataQueryComponent);
-                }
-            }
-        }
-    }
-
-    /**
-     * 初始化 通用查询 IMagicQueryComponent 实现类
-     *
-     * @param magicQueryComponents 接口实现
-     */
-    @Autowired(required = false)
-    private void init(IMagicQueryComponent[] magicQueryComponents) {
-        if (magicQueryComponents != null && magicQueryComponents.length > 0) {
-            for (IMagicQueryComponent magicQueryComponent : magicQueryComponents) {
-                //获取注解信息
-                ResourceInfo info = AnnotationUtils.getAnnotation(magicQueryComponent, ResourceInfo.class);
-                if (info != null) {
-                    //判断资源是否冲突
-                    initResourceInfo(magicQueryComponentMap, info);
-                    magicQueryComponentMap.put(info.name(), magicQueryComponent);
                 }
             }
         }
@@ -243,26 +221,6 @@ public class GlobalFactory {
         }
         logger.debug("获取资源：{} 数据修改接口", resourceName);
         return dataEditComponentMap.get(resourceName);
-    }
-
-    /**
-     * 通过资源类别，获取资源数据修改实现类
-     *
-     * @param resourceName 资源名称
-     * @return 资源数据修改实现类
-     */
-    public IMagicQueryComponent getMagicQueryComponent(String resourceName) {
-
-        if (StringUtil.isEmpty(resourceName)) {
-            logger.warn("资源:{} 不存在 数据修改接口 实现", resourceName);
-            throw new FactoryException("params.error");
-        }
-
-        if (!magicQueryComponentMap.containsKey(resourceName)) {
-            throw new FactoryException("interface.not.exist.error");
-        }
-        logger.debug("获取资源：{} 数据修改接口", resourceName);
-        return magicQueryComponentMap.get(resourceName);
     }
 
     /**

@@ -101,16 +101,4 @@ public class DataQueryManager {
         logger.info("[SPDataQueryManager search] self defined query. resourceName={}, param={}", resourceName, JSON.toJSONString(parameterMap));
         return dmFactory.getSelfDefinedSearch(resourceName, functionName).search(parameterMap);
     }
-
-    /**
-     * 自定义查询
-     *
-     * @param resourceName 资源名称
-     * @param parameterMap 参数（条件）
-     * @return 查询结果
-     */
-    public Object magicQuery(String resourceName, Map<String, String> parameterMap) {
-
-        return dmFactory.getMagicQueryComponent(resourceName).search(parameterMap);
-    }
 }
