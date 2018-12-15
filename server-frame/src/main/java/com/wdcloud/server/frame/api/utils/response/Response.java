@@ -2,8 +2,7 @@ package com.wdcloud.server.frame.api.utils.response;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.wdcloud.server.frame.context.DynamicApplicationContext;
-import com.wdcloud.server.frame.api.utils.message.LocaleMessageSourceBean;
+import com.wdcloud.server.frame.MessageUtil;
 import com.wdcloud.utils.StringUtil;
 
 import java.io.Serializable;
@@ -24,21 +23,21 @@ public class Response<T> implements Serializable {
         this(code, null, msg, params);
     }
 
-    public Response(Code code,  T entity,String msg) {
+    public Response(Code code, T entity, String msg) {
         this.code = code.code;
         this.entity = entity;
-        LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
+//        LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
 
-        this.message=bean.getMessage(msg);
-        if (StringUtil.isEmpty(message)){
-            this.message=msg;
+        this.message = MessageUtil.getMessage(msg);
+        if (StringUtil.isEmpty(message)) {
+            this.message = msg;
         }
     }
 
     private String getTranslateMsg(String msg) {
         if (StringUtil.isNotEmpty(msg)) {
-            LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
-            String message = bean.getMessage(msg);
+//            LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
+            String message = MessageUtil.getMessage(msg);
             if (StringUtil.isNotEmpty(message)) {
                 return message;
             }
@@ -50,7 +49,7 @@ public class Response<T> implements Serializable {
         this.code = code.code;
 
         if (code != Code.OK && StringUtil.isNotEmpty(msg)) {
-            LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
+//            LocaleMessageSourceBean bean = DynamicApplicationContext.getBean(LocaleMessageSourceBean.class);
 
             String message = getTranslateMsg(msg);
             if (StringUtil.isEmpty(message)) {
@@ -59,11 +58,11 @@ public class Response<T> implements Serializable {
                 String[] arrays = new String[params.length];
                 int index = 0;
                 for (String param : params) {
-                    String translate = bean.getMessage(param);
-                    if(StringUtil.isEmpty(translate)){
+                    String translate = MessageUtil.getMessage(param);
+                    if (StringUtil.isEmpty(translate)) {
                         arrays[index] = param;
-                    }else {
-                        arrays[index] = bean.getMessage(param);
+                    } else {
+                        arrays[index] = MessageUtil.getMessage(param);
                     }
                     index++;
                 }

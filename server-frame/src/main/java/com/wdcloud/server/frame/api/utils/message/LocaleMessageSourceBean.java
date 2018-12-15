@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
 import javax.annotation.Resource;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 @Slf4j
-@Component("localeResolver")
 public class LocaleMessageSourceBean implements LocaleResolver {
     //分隔符
     private final String REGX = "_";
