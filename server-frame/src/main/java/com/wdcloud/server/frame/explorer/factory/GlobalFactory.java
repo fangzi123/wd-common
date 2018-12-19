@@ -286,7 +286,7 @@ public class GlobalFactory {
                     this.selfDefinedSearchMap.put(definedFunction.resourceName, new HashMap<>());
                 }
                 if (getSelfDefinedSearchMap(definedFunction.resourceName).containsKey(definedFunction.functionName)) {
-                    throw new FactoryException("查询函数命名冲突");
+                    throw new FactoryException("自定义查询函数命名冲突: resourceName="+definedFunction.resourceName+",functionName="+definedFunction.functionName);
                 }
                 getSelfDefinedSearchMap(definedFunction.resourceName).put(definedFunction.functionName, selfDefinedSearch);
             }
