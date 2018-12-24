@@ -2,7 +2,7 @@ package com.wdcloud.server.frame.api;
 
 import com.alibaba.fastjson.JSON;
 import com.wdcloud.server.frame.FrameConstants;
-import com.wdcloud.server.frame.api.utils.PageNumUtils;
+import com.wdcloud.server.frame.PageNumUtils;
 import com.wdcloud.server.frame.api.utils.response.Code;
 import com.wdcloud.server.frame.api.utils.response.Response;
 import com.wdcloud.server.frame.explorer.DataQueryManager;
