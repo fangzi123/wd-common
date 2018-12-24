@@ -9,7 +9,6 @@ import com.wdcloud.server.frame.interfaces.OperateType;
 import com.wdcloud.server.frame.interfaces.info.DataEditInfo;
 import com.wdcloud.server.frame.interfaces.info.LinkedInfo;
 import com.wdcloud.utils.StringUtil;
-import com.wdcloud.utils.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
