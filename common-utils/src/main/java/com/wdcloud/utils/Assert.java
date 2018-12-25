@@ -1,6 +1,6 @@
 package com.wdcloud.utils;
 
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +31,14 @@ public class Assert {
         }
     }
 
-    public static void notEmpty(List list, String message) {
+    public static void notEmpty(List<?> list, String message) {
         if (list == null || list.isEmpty()) {
             logger.error(message);
             throw new BaseException(message);
         }
     }
 
-    public static void notEmpty(Map map, String message) {
+    public static void notEmpty(Map<?, ?> map, String message) {
         if (map == null || map.isEmpty()) {
             logger.error(message);
             throw new BaseException(message);

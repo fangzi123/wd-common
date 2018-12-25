@@ -1,6 +1,6 @@
 package com.wdcloud.server.frame.explorer.factory;
 
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 
 /**
  * 工厂异常

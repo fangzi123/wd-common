@@ -1,6 +1,5 @@
-package com.wdcloud.server.frame.api.utils;
+package com.wdcloud.server.frame;
 
-import com.wdcloud.server.frame.FrameConstants;
 import com.wdcloud.utils.StringUtil;
 
 import java.util.Map;

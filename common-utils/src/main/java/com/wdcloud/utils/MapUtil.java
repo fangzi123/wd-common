@@ -24,11 +24,11 @@ public class MapUtil {
      * @param map
      * @return
      */
-    public static Map<String, String> order(Map<String, String> map){
+    public static Map<String, String> order(Map<String, String> map) {
         HashMap<String, String> tempMap = new LinkedHashMap<>();
         List<Map.Entry<String, String>> infoIds = new ArrayList<>(map.entrySet());
 
-        Collections.sort(infoIds, Comparator.comparing(Map.Entry::getKey));
+        infoIds.sort(Comparator.comparing(Map.Entry::getKey));
 
         for (Map.Entry<String, String> item : infoIds) {
             tempMap.put(item.getKey(), item.getValue());
@@ -44,7 +44,7 @@ public class MapUtil {
      * @param ignore 忽略属性
      * @return
      */
-    public static Map<String, String> objectToMap(Object object, String... ignore){
+    public static Map<String, String> objectToMap(Object object, String... ignore) {
         Map<String, String> tempMap = new LinkedHashMap<>();
         for (Field field : getAllFields(object.getClass())) {
             if (!field.isAccessible()) {
@@ -94,17 +94,16 @@ public class MapUtil {
      * @param clazz
      * @return
      */
-    private static List<Field> getAllFields(Class<?> clazz){
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
         if (!clazz.equals(Object.class)) {
-            List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
             List<Field> fields2 = getAllFields(clazz.getSuperclass());
             if (fields2 != null) {
                 fields.addAll(fields2);
             }
-            return fields;
-        } else {
-            return null;
         }
+        return fields;
     }
 
     /**
@@ -115,7 +114,7 @@ public class MapUtil {
      * @param valueUrlEncode 是否编码
      * @return
      */
-    public static String mapJoin(Map<String, String> map, boolean keyLower, boolean valueUrlEncode){
+    public static String mapJoin(Map<String, String> map, boolean keyLower, boolean valueUrlEncode) {
         return mapJoin(map, keyLower, valueUrlEncode, "UTF-8");
     }
 
@@ -127,7 +126,7 @@ public class MapUtil {
      * @param valueUrlEncode 是否编码
      * @return
      */
-    public static String mapJoin(Map<String, String> map, boolean keyLower, boolean valueUrlEncode, String encodeCharset){
+    public static String mapJoin(Map<String, String> map, boolean keyLower, boolean valueUrlEncode, String encodeCharset) {
         StringBuilder stringBuilder = new StringBuilder();
 
         map.entrySet().stream().filter(paramEntry -> StringUtil.isNotEmpty(paramEntry.getValue())).forEach(paramEntry -> {
@@ -154,7 +153,7 @@ public class MapUtil {
      * @param xml xml串
      * @return
      */
-    public static Map<String, String> xmlToMap(String xml){
+    public static Map<String, String> xmlToMap(String xml) {
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = documentBuilder.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -179,7 +178,7 @@ public class MapUtil {
      * @param paternerKey
      * @return
      */
-    public static String generateSign(Map<String, String> map, String paternerKey){
+    public static String generateSign(Map<String, String> map, String paternerKey) {
         Map<String, String> tmap = MapUtil.order(map);
         if (tmap.containsKey("sign")) {
             tmap.remove("sign");
@@ -195,7 +194,7 @@ public class MapUtil {
      * @param paternerKey
      * @return
      */
-    public static <T> String generateSign(T obj, String paternerKey, String... ignore){
+    public static <T> String generateSign(T obj, String paternerKey, String... ignore) {
         Map<String, String> map = objectToMap(obj, ignore);
         Map<String, String> tmap = MapUtil.order(map);
         if (tmap.containsKey("sign")) {
@@ -222,6 +221,7 @@ public class MapUtil {
     /**
      * 根据注解@JSONField来转换对象到Map<String, String>，不处理嵌套复杂的对象
      * 值为null时，结果中不会保留
+     *
      * @param object
      * @return
      */

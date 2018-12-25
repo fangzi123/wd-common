@@ -3,7 +3,7 @@ package com.wdcloud.server.frame;
 import com.google.common.base.Throwables;
 import com.wdcloud.server.frame.api.utils.response.Code;
 import com.wdcloud.server.frame.api.utils.response.Response;
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

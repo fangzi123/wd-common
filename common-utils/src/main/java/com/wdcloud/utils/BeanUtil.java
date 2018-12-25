@@ -172,7 +172,7 @@ public class BeanUtil {
     public static <R> R copyProperties(Object source, Class<R> targetCls) {
         Assert.notNull(targetCls, "target class can not null");
         try {
-            R target = targetCls.newInstance();
+            R target = targetCls.getDeclaredConstructor().newInstance();
             if (source != null) {
                 copyProperties(source, target, false);
             }
@@ -193,7 +193,7 @@ public class BeanUtil {
     public static <R> R beanCopyProperties(Object source, Class<R> targetCls) {
         try {
             Assert.notNull(targetCls, "target class can not null");
-            R target = targetCls.newInstance();
+            R target = targetCls.getDeclaredConstructor().newInstance();
             if (source != null) {
                 BeanUtils.copyProperties(source, target);
             }
@@ -214,7 +214,7 @@ public class BeanUtil {
     public static <R> R beanCopyProperties(Object source, Class<R> targetCls, String ignoreProperties) {
         try {
             Assert.notNull(targetCls, "target class can not null");
-            R target = targetCls.newInstance();
+            R target = targetCls.getDeclaredConstructor().newInstance();
             if (source != null) {
                 if (StringUtil.isEmpty(ignoreProperties)) {
                     BeanUtils.copyProperties(source, target);

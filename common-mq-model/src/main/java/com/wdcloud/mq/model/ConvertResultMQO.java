@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 @Data
 public class ConvertResultMQO implements Serializable {
+
+    private static final long serialVersionUID = -1521887780668090827L;
+
     private String fileId;//文件ID
     private String originName;
     private Long fileSize;
