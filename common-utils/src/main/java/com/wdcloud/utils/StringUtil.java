@@ -136,17 +136,6 @@ public class StringUtil {
         return new ArrayList<>();
     }
 
-    public static String getDateByString(Date date, String format) {
-        if (StringUtil.isEmpty(format)) {
-            format = DEFAULT_FORMAT;
-        }
-        if (date != null) {
-            SimpleDateFormat df = new SimpleDateFormat(format);
-            return df.format(date);
-        } else {
-            return null;
-        }
-    }
 
     /**
      * MD5签名算法

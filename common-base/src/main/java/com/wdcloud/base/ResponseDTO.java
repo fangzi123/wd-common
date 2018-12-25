@@ -1,4 +1,4 @@
-package com.wdcloud.utils;
+package com.wdcloud.base;
 
 import java.io.Serializable;
 

@@ -16,6 +16,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.wdcloud</groupId>
+                <artifactId>common-base</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wdcloud</groupId>
                 <artifactId>common-utils</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>

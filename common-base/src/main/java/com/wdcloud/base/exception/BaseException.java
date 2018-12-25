@@ -1,10 +1,12 @@
-package com.wdcloud.utils.exception;
+package com.wdcloud.base.exception;
 
 /**
  * @author andy
  * @date 2016/6/13.
  */
 public class BaseException extends RuntimeException {
+
+    private static final long serialVersionUID = -4271274584614989089L;
 
     protected String[] i18nMsg;
 

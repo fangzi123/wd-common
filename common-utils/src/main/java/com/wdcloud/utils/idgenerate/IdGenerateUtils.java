@@ -2,7 +2,7 @@ package com.wdcloud.utils.idgenerate;
 
 import com.wdcloud.utils.RandomUtils;
 import com.wdcloud.utils.StringUtil;
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 
 /**
  * ID 生成器
