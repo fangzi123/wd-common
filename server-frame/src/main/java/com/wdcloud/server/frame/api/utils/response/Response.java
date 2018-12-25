@@ -11,6 +11,8 @@ import java.text.MessageFormat;
 
 public class Response<T> implements Serializable {
 
+    private static final long serialVersionUID = 586996702847312618L;
+
     private int code;
     private String message;
     private T entity;
