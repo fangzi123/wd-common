@@ -1,4 +1,4 @@
-package com.wdcloud.server.frame.api.utils.message;
+package com.wdcloud.server.frame.message;
 
 import com.wdcloud.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
