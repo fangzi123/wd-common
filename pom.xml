@@ -25,6 +25,7 @@
         <module>mybatis-plugins</module>
         <module>common-envconfig</module>
         <module>common-validation</module>
+        <module>common-dubboclient</module>
         <module>common-dao</module>
         <module>common-mq-model</module>
         <module>server-explorer</module>
@@ -63,8 +64,8 @@
                         <!--<arg>-verbose</arg>-->
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>10</source>
+                    <target>10</target>
                 </configuration>
             </plugin>
             <plugin>
