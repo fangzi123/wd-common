@@ -15,26 +15,27 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"JavaDoc", "SpringJavaAutowiredFieldsWarningInspection"})
 @Slf4j
 public class RedisService implements IRedisService {
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
-    public RedisService(RedisTemplate<String, Object> redisTemplate) {
+    public RedisService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, String> redisTemplate() {
         return redisTemplate;
     }
 
     @Override
-    public void set(String key, Object value) {
+    public void set(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
     }
 
     @Override
-    public Object get(String key) {
+    public String get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
+
 
     @Override
     public String getRange(String key, int start, int end) {
@@ -42,37 +43,33 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Object getSet(String key, String value) {
+    public String getSet(String key, String value) {
         return redisTemplate.opsForValue().getAndSet(key, value);
     }
 
-    @Override
-    public Boolean getBit(String key, long offset) {
-        return redisTemplate.opsForValue().getBit(key, offset);
-    }
 
     @Override
-    public List<Object> mGet(Collection<String> keys) {
+    public List<String> mGet(Collection<String> keys) {
         return redisTemplate.opsForValue().multiGet(keys);
     }
 
     @Override
-    public Boolean setBit(String key, long offset, boolean value) {
-        return redisTemplate.opsForValue().setBit(key, offset, value);
+    public void setEx(String key, String value, long timeout) {
+        setEx(key, value, timeout, TimeUnit.SECONDS);
     }
 
     @Override
-    public void setEx(String key, Object value, long timeout, TimeUnit unit) {
+    public void setEx(String key, String value, long timeout, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, value, timeout, unit);
     }
 
     @Override
-    public Boolean setNx(String key, Object value) {
+    public Boolean setNx(String key, String value) {
         return redisTemplate.opsForValue().setIfAbsent(key, value);
     }
 
     @Override
-    public void setRange(String key, int offset, Object value) {
+    public void setRange(String key, int offset, String value) {
         redisTemplate.opsForValue().set(key, value, offset);
     }
 
@@ -82,17 +79,17 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public void mSet(Map<String, Object> keyValues) {
+    public void mSet(Map<String, String> keyValues) {
         redisTemplate.opsForValue().multiSet(keyValues);
     }
 
     @Override
-    public void mSetNx(Map<String, Object> keyValues) {
-        throw new RuntimeException("未实现");
+    public Boolean mSetNx(Map<String, String> keyValues) {
+        return redisTemplate.opsForValue().multiSetIfAbsent(keyValues);
     }
 
     @Override
-    public void pSetEx(String key, Object value, long timeout) {
+    public void pSetEx(String key, String value, long timeout) {
         setEx(key, value, timeout, TimeUnit.MILLISECONDS);
     }
 
@@ -132,6 +129,11 @@ public class RedisService implements IRedisService {
     }
 
     @Override
+    public void hDel(String key, String hashKey) {
+        redisTemplate.opsForHash().delete(key, hashKey);
+    }
+
+    @Override
     public void hDel(String key, Collection<String> hashKeys) {
         redisTemplate.opsForHash().delete(key, hashKeys);
     }
@@ -142,31 +144,31 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Object hGet(String key, String hashKey) {
-        return redisTemplate.opsForHash().get(key, hashKey);
+    public String hGet(String key, String hashKey) {
+        return (String) redisTemplate.opsForHash().get(key, hashKey);
     }
 
     @Override
-    public Map<String, Object> hGetAll(String key) {
+    public Map<String, String> hGetAll(String key) {
         final Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
-        LinkedHashMap<String, Object> reMaps = new LinkedHashMap<>(entries.values().size());
-        entries.forEach((k, v) -> reMaps.put((String) k, v));
+        LinkedHashMap<String, String> reMaps = new LinkedHashMap<>(entries.values().size());
+        entries.forEach((k, v) -> reMaps.put((String) k, (String) v));
         return reMaps;
     }
 
     @Override
-    public void hIncr(String key, String hashKey) {
-        hIncrBy(key, hashKey, 1);
+    public Long hIncr(String key, String hashKey) {
+        return hIncrBy(key, hashKey, 1);
     }
 
     @Override
-    public void hIncrBy(String key, String hashKey, long delta) {
-        redisTemplate.opsForHash().increment(key, hashKey, Math.abs(delta));
+    public Long hIncrBy(String key, String hashKey, long delta) {
+        return redisTemplate.opsForHash().increment(key, hashKey, Math.abs(delta));
     }
 
     @Override
-    public void hIncrByFloat(String key, String hashKey, double delta) {
-        redisTemplate.opsForHash().increment(key, hashKey, Math.abs(delta));
+    public Double hIncrByFloat(String key, String hashKey, double delta) {
+        return redisTemplate.opsForHash().increment(key, hashKey, Math.abs(delta));
     }
 
     @Override
@@ -198,28 +200,34 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public List<Object> hMget(String key, Collection<String> hashKeys) {
-        return redisTemplate.opsForHash().multiGet(key, Collections.singleton(hashKeys));
+    public List<String> hMget(String key, Collection<String> hashKeys) {
+        List<Object> objects = redisTemplate.opsForHash().multiGet(key, new HashSet<>(hashKeys));
+        List<String> values = new ArrayList<>(objects.size());
+        objects.forEach(o -> values.add((String) o));
+        return values;
     }
 
     @Override
-    public void hMset(String key, Map<String, Object> hashKeyValues) {
+    public void hMset(String key, Map<String, String> hashKeyValues) {
         redisTemplate.opsForHash().putAll(key, hashKeyValues);
     }
 
     @Override
-    public void hSet(String key, String hashKey, Object value) {
+    public void hSet(String key, String hashKey, String value) {
         redisTemplate.opsForHash().put(key, hashKey, value);
     }
 
     @Override
-    public void hSetNx(String key, String hashKey, Object value) {
+    public void hSetNx(String key, String hashKey, String value) {
         redisTemplate.opsForHash().putIfAbsent(key, hashKey, value);
     }
 
     @Override
-    public List<Object> hVals(String key) {
-        return redisTemplate.opsForHash().values(key);
+    public List<String> hVals(String key) {
+        List<Object> objects = redisTemplate.opsForHash().values(key);
+        List<String> values = new ArrayList<>(objects.size());
+        objects.forEach(o -> values.add((String) o));
+        return values;
     }
 
     @Override
@@ -228,22 +236,22 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Object bLpop(String key, long timeout, TimeUnit unit) {
+    public String bLpop(String key, long timeout, TimeUnit unit) {
         return redisTemplate.opsForList().leftPop(key, timeout, unit);
     }
 
     @Override
-    public Object rLpop(String key, long timeout, TimeUnit unit) {
+    public String rLpop(String key, long timeout, TimeUnit unit) {
         return redisTemplate.opsForList().rightPop(key, timeout, unit);
     }
 
     @Override
-    public Object bRpopLpush(String srcKey, String targetKey, long timeout, TimeUnit unit) {
+    public String bRpopLpush(String srcKey, String targetKey, long timeout, TimeUnit unit) {
         return redisTemplate.opsForList().rightPopAndLeftPush(srcKey, targetKey, timeout, unit);
     }
 
     @Override
-    public Long lInsert(String key, Object pivot, Object value) {
+    public Long lInsert(String key, String pivot, String value) {
         return redisTemplate.opsForList().leftPush(key, pivot, value);
     }
 
@@ -254,37 +262,37 @@ public class RedisService implements IRedisService {
 
 
     @Override
-    public Object lIndex(String key, long index) {
+    public String lIndex(String key, long index) {
         return redisTemplate.opsForList().index(key, index);
     }
 
     @Override
-    public Object lPop(String key) {
+    public String lPop(String key) {
         return redisTemplate.opsForList().leftPop(key);
     }
 
     @Override
-    public Long lPush(String key, Object value) {
+    public Long lPush(String key, String value) {
         return redisTemplate.opsForList().leftPush(key, value);
     }
 
     @Override
-    public Long lPushX(String key, Object value) {
+    public Long lPushX(String key, String value) {
         return redisTemplate.opsForList().leftPushIfPresent(key, value);
     }
 
     @Override
-    public List<Object> lRange(String key, long start, long stop) {
+    public List<String> lRange(String key, long start, long stop) {
         return redisTemplate.opsForList().range(key, start, stop);
     }
 
     @Override
-    public Long lRem(String key, long count, Object value) {
+    public Long lRem(String key, long count, String value) {
         return redisTemplate.opsForList().remove(key, count, value);
     }
 
     @Override
-    public void lSet(String key, long index, Object value) {
+    public void lSet(String key, long index, String value) {
         redisTemplate.opsForList().set(key, index, value);
     }
 
@@ -294,33 +302,44 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Object rPop(String key) {
+    public String rPop(String key) {
         return redisTemplate.opsForList().rightPop(key);
     }
 
     @Override
-    public Object rPopLpush(String srcKey, String targetKey) {
+    public String rPopLpush(String srcKey, String targetKey) {
 
         return redisTemplate.opsForList().rightPopAndLeftPush(srcKey, targetKey);
     }
 
     @Override
-    public Long rPush(String key, Collection<Object> values) {
+    public Long rPush(String key, String value) {
+        return redisTemplate.opsForList().rightPush(key, value);
+    }
+
+    @Override
+    public Long rPush(String key, Collection<String> values) {
         return redisTemplate.opsForList().rightPushAll(key, values);
     }
 
     @Override
-    public Long rPushX(String key, Object value) {
+    public Long rPushX(String key, String value) {
         return redisTemplate.opsForList().rightPushIfPresent(key, value);
     }
 
     @Override
-    public Long sAdd(String key, Object member) {
+    public Long sAdd(String key, String member) {
         return redisTemplate.opsForSet().add(key, member);
     }
 
     @Override
-    public Long sAdd(String key, Collection<Object> members) {
+    public Long sAdd(String key, Collection<String> members) {
+        String[] ms = members.toArray(new String[0]);
+        return sAdd(key, ms);
+    }
+
+    @Override
+    public Long sAdd(String key, String[] members) {
         return redisTemplate.opsForSet().add(key, members);
     }
 
@@ -330,7 +349,7 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Set<Object> sDiff(String key1, String key2) {
+    public Set<String> sDiff(String key1, String key2) {
         return redisTemplate.opsForSet().difference(key1, key2);
     }
 
@@ -340,7 +359,7 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Set<Object> sInter(String key1, String key2) {
+    public Set<String> sInter(String key1, String key2) {
         return redisTemplate.opsForSet().intersect(key1, key2);
     }
 
@@ -350,52 +369,58 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Boolean sIsMember(String key, Object member) {
+    public Boolean sIsMember(String key, String member) {
         return redisTemplate.opsForSet().isMember(key, member);
     }
 
     @Override
-    public Set<Object> sMembers(String key) {
+    public Set<String> sMembers(String key) {
         return redisTemplate.opsForSet().members(key);
     }
 
     @Override
-    public Boolean sMove(String srcKey, String targetKey, Object member) {
+    public Boolean sMove(String srcKey, String targetKey, String member) {
         return redisTemplate.opsForSet().move(srcKey, member, targetKey);
     }
 
     @Override
-    public Object sPop(String key) {
+    public String sPop(String key) {
         return redisTemplate.opsForSet().pop(key);
     }
 
     @Override
-    public Object sRandMember(String key) {
+    public String sRandMember(String key) {
         return redisTemplate.opsForSet().randomMember(key);
     }
 
     @Override
-    public List<Object> sRandMember(String key, long count) {
+    public List<String> sRandMember(String key, long count) {
         return redisTemplate.opsForSet().randomMembers(key, count);
     }
 
     @Override
-    public Long sRem(String key, Object member) {
+    public Long sRem(String key, String member) {
         return redisTemplate.opsForSet().remove(key, member);
     }
 
     @Override
-    public Long sRem(String key, Collection<Object> members) {
-        return redisTemplate.opsForSet().remove(key, members);
+    public Long sRem(String key, String[] members) {
+        return redisTemplate.opsForSet().remove(key, (Object[]) members);
     }
 
     @Override
-    public Set<Object> sUnion(String key1, String key2) {
+    public Long sRem(String key, Collection<String> members) {
+        String[] ms = members.toArray(new String[0]);
+        return sRem(key, ms);
+    }
+
+    @Override
+    public Set<String> sUnion(String key1, String key2) {
         return redisTemplate.opsForSet().union(key1, key2);
     }
 
     @Override
-    public Set<Object> sUnion(String key1, Collection<String> keys) {
+    public Set<String> sUnion(String key1, Collection<String> keys) {
         return redisTemplate.opsForSet().union(key1, keys);
     }
 
@@ -416,13 +441,13 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Boolean zAdd(String key, Object member, double score) {
+    public Boolean zAdd(String key, String member, double score) {
         return redisTemplate.opsForZSet().add(key, member, score);
     }
 
     @Override
-    public Long zAdd(String key, Map<Object, Double> members) {
-        Set<ZSetOperations.TypedTuple<Object>> tuples = new HashSet<>();
+    public Long zAdd(String key, Map<String, Double> members) {
+        Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
         members.forEach((k, v) -> tuples.add(new DefaultTypedTuple<>(k, v)));
         return redisTemplate.opsForZSet().add(key, tuples);
     }
@@ -438,12 +463,12 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Double zIncrBy(String key, double delta, Object member) {
+    public Double zIncrBy(String key, double delta, String member) {
         return redisTemplate.opsForZSet().incrementScore(key, member, Math.abs(delta));
     }
 
     @Override
-    public Double zDecrBy(String key, double delta, Object member) {
+    public Double zDecrBy(String key, double delta, String member) {
         return redisTemplate.opsForZSet().incrementScore(key, member, delta > 0 ? -delta : delta);
 
     }
@@ -459,38 +484,28 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Long zLexCount(String key, double min, double max) {
-        return redisTemplate.opsForZSet().count(key, min, max);
-    }
-
-    @Override
-    public Set<Object> zRange(String key, long start, long stop) {
+    public Set<String> zRange(String key, long start, long stop) {
         return redisTemplate.opsForZSet().range(key, start, stop);
     }
 
     @Override
-    public Set<Object> zRangeByLex(String key, double min, double max) {
-        throw new RuntimeException("未实现");
-    }
-
-    @Override
-    public Set<Object> zRangeByScore(String key, double min, double max) {
+    public Set<String> zRangeByScore(String key, double min, double max) {
         return redisTemplate.opsForZSet().rangeByScore(key, min, max);
     }
 
     @Override
-    public Long zRank(String key, Object member) {
+    public Long zRank(String key, String member) {
         return redisTemplate.opsForZSet().rank(key, member);
     }
 
     @Override
-    public Long zRem(String key, Object member) {
-        return redisTemplate.opsForZSet().remove(key, List.of(member));
+    public Long zRem(String key, String member) {
+        return redisTemplate.opsForZSet().remove(key, member);
     }
 
     @Override
-    public Long zRem(String key, Collection<Object> members) {
-        return redisTemplate.opsForZSet().remove(key, members);
+    public Long zRem(String key, Collection<String> members) {
+        return redisTemplate.opsForZSet().remove(key, members.toArray(new Object[0]));
     }
 
     @Override
@@ -504,22 +519,22 @@ public class RedisService implements IRedisService {
     }
 
     @Override
-    public Set<Object> zRevRange(String key, long start, long stop) {
+    public Set<String> zRevRange(String key, long start, long stop) {
         return redisTemplate.opsForZSet().reverseRange(key, start, stop);
     }
 
     @Override
-    public Set<Object> zRevRangeByScore(String key, double start, double stop) {
-        return redisTemplate.opsForZSet().reverseRangeByScore(key, start, stop);
+    public Set<String> zRevRangeByScore(String key, double max, double min) {
+        return redisTemplate.opsForZSet().reverseRangeByScore(key, min, max);
     }
 
     @Override
-    public Long zRevRank(String key, Object member) {
+    public Long zRevRank(String key, String member) {
         return redisTemplate.opsForZSet().reverseRank(key, member);
     }
 
     @Override
-    public Double zScore(String key, Object member) {
+    public Double zScore(String key, String member) {
         return redisTemplate.opsForZSet().score(key, member);
     }
 
