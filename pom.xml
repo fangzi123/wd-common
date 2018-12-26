@@ -30,7 +30,7 @@
         <module>server-explorer</module>
         <module>server-frame</module>
         <module>common-base</module>
-
+        <module>common-redis</module>
     </modules>
     <dependencyManagement>
         <dependencies>
