@@ -1,6 +1,6 @@
 package com.wdcloud.utils;
 
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 
 import java.security.MessageDigest;
 

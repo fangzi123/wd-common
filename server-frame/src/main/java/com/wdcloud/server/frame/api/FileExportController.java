@@ -2,7 +2,7 @@ package com.wdcloud.server.frame.api;
 
 import com.wdcloud.server.frame.explorer.FileManager;
 import com.wdcloud.utils.WebUtil;
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

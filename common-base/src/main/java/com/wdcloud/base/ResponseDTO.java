@@ -1,8 +1,10 @@
-package com.wdcloud.utils;
+package com.wdcloud.base;
 
 import java.io.Serializable;
 
 public class ResponseDTO<T> implements Serializable {
+
+    private static final long serialVersionUID = -2104615952790251447L;
 
     private boolean success;
     private String message;

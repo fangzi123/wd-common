@@ -1,13 +1,9 @@
 package com.wdcloud.utils;
 
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 
 import java.security.MessageDigest;
 
-/**
- * Created by botter
- * on 17-5-12.
- */
 public class MD5Util {
 
     private static final String IterationCount = "MD5";

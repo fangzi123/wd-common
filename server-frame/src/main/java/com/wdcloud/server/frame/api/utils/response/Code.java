@@ -1,6 +1,6 @@
 package com.wdcloud.server.frame.api.utils.response;
 
-import com.wdcloud.utils.exception.BaseException;
+import com.wdcloud.base.exception.BaseException;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -28,6 +28,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.wdcloud</groupId>
+                <artifactId>common-base</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wdcloud</groupId>
                 <artifactId>common-utils</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -51,6 +56,11 @@
             <dependency>
                 <groupId>com.wdcloud</groupId>
                 <artifactId>common-dao</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wdcloud</groupId>
+                <artifactId>common-dubboclient</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>

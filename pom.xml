@@ -25,10 +25,12 @@
         <module>mybatis-plugins</module>
         <module>common-envconfig</module>
         <module>common-validation</module>
+        <module>common-dubboclient</module>
         <module>common-dao</module>
         <module>common-mq-model</module>
         <module>server-explorer</module>
         <module>server-frame</module>
+        <module>common-base</module>
 
     </modules>
     <dependencyManagement>

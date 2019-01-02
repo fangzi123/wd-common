@@ -70,6 +70,18 @@ public class DateUtil {
         return cal.get(Calendar.YEAR);
     }
 
+    public static String getDateByString(Date date, String format) {
+        if (StringUtil.isEmpty(format)) {
+            format = DEFAULT_FORMAT;
+        }
+        if (date != null) {
+            SimpleDateFormat df = new SimpleDateFormat(format);
+            return df.format(date);
+        } else {
+            return null;
+        }
+    }
+
     public static Date getDateByString(String date, String format) {
         if (StringUtil.isEmpty(format)) {
             format = DEFAULT_FORMAT;
@@ -97,6 +109,8 @@ public class DateUtil {
             return null;
         }
     }
+
+
 
     public static Date getDayStartOfDate(Date date) {
         String formatDate = getFormatDate(date, "yyyy-MM-dd");
@@ -436,9 +450,9 @@ public class DateUtil {
      */
     public static Date getFirstDayOfQuarter(Integer year, Integer quarter) {
         Calendar calendar = Calendar.getInstance();
-        Integer month = new Integer(0);
+        int month;
         if (quarter == 1) {
-            month = 1 - 1;
+            month = 0;
         } else if (quarter == 2) {
             month = 4 - 1;
         } else if (quarter == 3) {
@@ -475,7 +489,7 @@ public class DateUtil {
 
     public static Date getLastDayOfQuarter(Integer year, Integer quarter) {
         Calendar calendar = Calendar.getInstance();
-        Integer month = new Integer(0);
+        int month;
         if (quarter == 1) {
             month = 3 - 1;
         } else if (quarter == 2) {

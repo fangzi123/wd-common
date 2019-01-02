@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.wdcloud.utils.StringUtil;
 import com.wdcloud.utils.excel.annotation.ExcelField;
-import com.wdcloud.utils.exception.ExcelTemplateFormatException;
+import com.wdcloud.base.exception.ExcelTemplateFormatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
