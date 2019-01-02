@@ -20,17 +20,17 @@
         <wd-dependencies.version>1.0.0-SNAPSHOT</wd-dependencies.version>
     </properties>
     <modules>
-        <module>common-dependencies</module>
+        <module>common-base</module>
+        <module>common-dao</module>
         <module>common-utils</module>
         <module>mybatis-plugins</module>
         <module>common-envconfig</module>
         <module>common-validation</module>
-        <module>common-dao</module>
+        <module>common-redis</module>
         <module>common-mq-model</module>
         <module>server-explorer</module>
         <module>server-frame</module>
-        <module>common-base</module>
-        <module>common-redis</module>
+        <module>common-dependencies</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -88,7 +88,7 @@
                     <skip>true</skip>
                     <!--illegal-access=permit以允许第三方库的所有反射访问-->
                     <!--<argLine>-->
-                        <!--&#45;&#45;illegal-access=permit-->
+                    <!--&#45;&#45;illegal-access=permit-->
                     <!--</argLine>-->
                 </configuration>
             </plugin>
