@@ -19,6 +19,11 @@
         </dependency>
         <dependency>
             <groupId>com.wdcloud</groupId>
+            <artifactId>common-validation</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wdcloud</groupId>
             <artifactId>server-explorer</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
