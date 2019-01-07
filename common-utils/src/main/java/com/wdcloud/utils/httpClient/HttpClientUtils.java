@@ -10,6 +10,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -208,8 +209,10 @@ public class HttpClientUtils {
 
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(3000).build();
         HttpPost httpPost = new HttpPost(uriAPI);
+
         httpPost.setConfig(requestConfig);
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         multipartEntityBuilder.setCharset(Charset.forName("UTF-8"));
         multipartEntityBuilder.addBinaryBody("file", inputStream, ContentType.MULTIPART_FORM_DATA, fileName);
         HttpEntity httpEntity = multipartEntityBuilder.build();
