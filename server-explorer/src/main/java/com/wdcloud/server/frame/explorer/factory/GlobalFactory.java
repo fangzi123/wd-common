@@ -6,6 +6,7 @@ import com.wdcloud.server.frame.interfaces.info.DefinedFunctionInfo;
 import com.wdcloud.utils.AnnotationUtils;
 import com.wdcloud.utils.Assert;
 import com.wdcloud.utils.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,16 @@ import java.util.Map;
  * @author csf
  * @Date 2015/7/24.
  */
+@Slf4j
 @Service
 public class GlobalFactory {
-
-    private static Logger logger = LoggerFactory.getLogger(GlobalFactory.class);
-
     private final Map<String, IDataEditComponent> dataEditComponentMap;
     private final Map<String, IDataQueryComponent> dataQueryComponentMap;
     private final Map<String, Map<String, ISelfDefinedSearch>> selfDefinedSearchMap;
     private final Map<String, Map<String, ISelfDefinedEdit>> selfDefinedEdit;
     private final Map<String, Map<OperateType, Map<String, List<IDataLinkedHandle>>>> dataLinkedHandleMap;
     private final Map<String, IFileManagerComponent> fileManagerComponentMap;
+    private final Map<String, Map<String, IDirectComponent>> directComponentMap;
 
     private final Map<String, String> nameDescriptionMap;
 
@@ -49,6 +49,7 @@ public class GlobalFactory {
         this.selfDefinedEdit = new HashMap<>();
         this.dataLinkedHandleMap = new HashMap<>();
         this.fileManagerComponentMap = new HashMap<>();
+        this.directComponentMap = new HashMap<>();
     }
 
     /**
@@ -181,6 +182,32 @@ public class GlobalFactory {
         }
     }
 
+    @Autowired(required = false)
+    private void init(IDirectComponent[] directComponents) {
+        if (directComponents == null) {
+            return;
+        }
+        for (IDirectComponent directComponent : directComponents) {
+            IDirectComponent.DirectHandler directHandler = AnnotationUtils.getAnnotation(directComponent, IDirectComponent.DirectHandler.class);
+            if (directHandler == null || StringUtil.isEmpty(directHandler.resource()) || StringUtil.isEmpty(directHandler.function())) {
+                continue;
+            }
+
+            String resource = directHandler.resource();
+            String function = directHandler.function();
+
+            if (!directComponentMap.containsKey(resource)) {
+                directComponentMap.put(resource, new HashMap<>());
+            }
+
+            if (!directComponentMap.get(resource).containsKey(function)) {
+                directComponentMap.get(resource).put(function, directComponent);
+            } else {
+                throw new FactoryException("DirectComponent资源：" + resource + "已存在");
+            }
+        }
+    }
+
     /**
      * 判断资源是否冲突
      *
@@ -193,14 +220,31 @@ public class GlobalFactory {
 
         if (map.containsKey(info.name())) {
             if (nameDescriptionMap.containsKey(info.name())) {
-                logger.error("资源：{} 已存在 与（资源简介）：{} 冲突", info.name(), nameDescriptionMap.get(info.name()));
+                log.error("资源：{} 已存在 与（资源简介）：{} 冲突", info.name(), nameDescriptionMap.get(info.name()));
                 throw new FactoryException("资源：" + info.name() + "已存在 与（资源简介）：" + nameDescriptionMap.get(info.name()) + "冲突");
             } else {
                 nameDescriptionMap.put(info.name(), info.description());
-                logger.error("资源：" + info.name() + "已存在");
+                log.error("资源：" + info.name() + "已存在");
                 throw new FactoryException("资源：" + info.name() + "已存在");
             }
         }
+    }
+
+    public IDirectComponent getDirectComponent(String resourceName, String functionName) {
+
+        if (StringUtil.isEmpty(resourceName) || StringUtil.isEmpty(functionName)) {
+            throw new FactoryException("params.error");
+        }
+
+        if (!directComponentMap.containsKey(resourceName)) {
+            throw new FactoryException("interface.not.exist.error");
+        }
+        log.debug("获取DirectComponent资源：{}", resourceName);
+        IDirectComponent directComponent = directComponentMap.get(resourceName).get(functionName);
+        if (directComponent == null) {
+            throw new FactoryException("interface.not.exist.error");
+        }
+        return directComponent;
     }
 
     /**
@@ -212,14 +256,14 @@ public class GlobalFactory {
     public IDataEditComponent getDataEditComponent(String resourceName) {
 
         if (StringUtil.isEmpty(resourceName)) {
-            logger.warn("资源:{} 不存在 数据修改接口 实现", resourceName);
+            log.warn("资源:{} 不存在 数据修改接口 实现", resourceName);
             throw new FactoryException("params.error");
         }
 
         if (!dataEditComponentMap.containsKey(resourceName)) {
             throw new FactoryException("interface.not.exist.error");
         }
-        logger.debug("获取资源：{} 数据修改接口", resourceName);
+        log.debug("获取资源：{} 数据修改接口", resourceName);
         return dataEditComponentMap.get(resourceName);
     }
 
@@ -232,16 +276,16 @@ public class GlobalFactory {
     public IDataQueryComponent getDataQueryComponent(String resourceName) {
 
         if (StringUtil.isEmpty(resourceName)) {
-            logger.error("getDataQueryComponent 资源名为空");
+            log.error("getDataQueryComponent 资源名为空");
             throw new FactoryException("params.error");
         }
 
         if (!dataQueryComponentMap.containsKey(resourceName)) {
-            logger.error("资源:{}不存在 查询接口", resourceName);
+            log.error("资源:{}不存在 查询接口", resourceName);
             throw new FactoryException("interface.not.exist.error");
         }
 
-        logger.debug("获取资源：{} 查询接口", resourceName);
+        log.debug("获取资源：{} 查询接口", resourceName);
         return dataQueryComponentMap.get(resourceName);
     }
 
@@ -254,14 +298,14 @@ public class GlobalFactory {
      */
     public List<IDataLinkedHandle> getDataLinkedHandle(String resourceName, String functionName, OperateType operateType) {
         if (StringUtil.isEmpty(resourceName) || null == operateType) {
-            logger.warn("获取资源联动实现时 资源名称或操作类别不能为空");
+            log.warn("获取资源联动实现时 资源名称或操作类别不能为空");
             return new ArrayList<>();
         }
 
         if (dataLinkedHandleMap.containsKey(resourceName)) {
             Map<OperateType, Map<String, List<IDataLinkedHandle>>> operateTypeListMap = dataLinkedHandleMap.get(resourceName);
             if (operateTypeListMap.containsKey(operateType)) {
-                logger.debug("获取资源：{}   操作类别：{}  联动接口", resourceName, operateType);
+                log.debug("获取资源：{}   操作类别：{}  联动接口", resourceName, operateType);
                 return operateTypeListMap.get(operateType).get(functionName);
             }
         }
@@ -302,13 +346,13 @@ public class GlobalFactory {
      */
     public ISelfDefinedSearch getSelfDefinedSearch(String resourceName, String functionName) {
         if (StringUtil.isEmpty(resourceName) || StringUtil.isEmpty(functionName)) {
-            logger.error("getSelfDefinedSearch 资源名,方法名为空");
+            log.error("getSelfDefinedSearch 资源名,方法名为空");
             throw new FactoryException("params.error");
         }
         Map<String, ISelfDefinedSearch> functorMap = getSelfDefinedSearchMap(resourceName);
         ISelfDefinedSearch ret = functorMap.get(functionName);
         if (ret == null) {
-            logger.error("资源:{},方法名：{} 不存在 获取自定义查询实现类", functionName, functionName);
+            log.error("资源:{},方法名：{} 不存在 获取自定义查询实现类", functionName, functionName);
             throw new FactoryException("interface.not.exist.error");
         }
         return ret;
@@ -317,7 +361,7 @@ public class GlobalFactory {
     private Map<String, ISelfDefinedSearch> getSelfDefinedSearchMap(String resourceName) {
         Map<String, ISelfDefinedSearch> ret = selfDefinedSearchMap.get(resourceName);
         if (ret == null) {
-            logger.error("资源:{}不存在 获取自定义查询实现类", resourceName);
+            log.error("资源:{}不存在 获取自定义查询实现类", resourceName);
             throw new FactoryException("interface.not.exist.error");
         }
         return ret;
@@ -376,13 +420,13 @@ public class GlobalFactory {
      */
     public ISelfDefinedEdit getSelfDefinedEdit(String resourceName, String functionName) {
         if (StringUtil.isEmpty(resourceName) || StringUtil.isEmpty(functionName)) {
-            logger.error("资源名,方法名为空");
+            log.error("资源名,方法名为空");
             throw new FactoryException("params.error");
         }
         Map<String, ISelfDefinedEdit> functionMap = getSelfDefinedEditMap(resourceName);
         ISelfDefinedEdit ret = functionMap.get(functionName);
         if (ret == null) {
-            logger.error("资源:{},方法名：{} 不存在 获取自定义修改实现类", functionName, functionName);
+            log.error("资源:{},方法名：{} 不存在 获取自定义修改实现类", functionName, functionName);
             throw new FactoryException("interface.not.exist.error");
         }
         return ret;
@@ -392,7 +436,7 @@ public class GlobalFactory {
 
         Map<String, ISelfDefinedEdit> ret = selfDefinedEdit.get(resourceName);
         if (ret == null) {
-            logger.error("资源:{}不存在 获取自定义修改实现类", resourceName);
+            log.error("资源:{}不存在 获取自定义修改实现类", resourceName);
             throw new FactoryException("interface.not.exist.error");
         }
         return ret;
@@ -408,13 +452,13 @@ public class GlobalFactory {
     public IFileManagerComponent getFileManagerComponent(String resourceName) {
 
         if (StringUtil.isEmpty(resourceName)) {
-            logger.error("resource name is null");
+            log.error("resource name is null");
             throw new ParamErrorException();
         }
         if (!fileManagerComponentMap.containsKey(resourceName)) {
             throw new FactoryException("interface.not.exist.error");
         }
-        logger.debug("获取资源：{}文件管理接口", resourceName);
+        log.debug("获取资源：{}文件管理接口", resourceName);
         return fileManagerComponentMap.get(resourceName);
     }
     //end 自定义查询接口初始化
