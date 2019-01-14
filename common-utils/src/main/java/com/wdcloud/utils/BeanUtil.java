@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class BeanUtil {
 
     public static final String SORT_DESC = "desc"; //排序方式
 
-    public static boolean checkObject(Object obj, boolean strNotEmpty, String...checkAttribute) {
+    public static boolean checkObject(Object obj, boolean strNotEmpty, String... checkAttribute) {
         Assert.notNull(obj, "对象不能为空");
 
         if (checkAttribute == null) {
@@ -89,8 +88,8 @@ public class BeanUtil {
     /**
      * 检查字段是否为空
      *
-     * @param field 属性
-     * @param obj   对象
+     * @param field      属性
+     * @param obj        对象
      * @param checkEmpty 如果字段类型为String, 检查是否为空白字符串
      * @return 如果属性为空，返回True
      */
@@ -252,16 +251,6 @@ public class BeanUtil {
         }
     }
 
-    public static <R> R copyPropertiesBySpring(Object source, Class<R> targetClass) {
-        try {
-            R target = targetClass.getDeclaredConstructor().newInstance();
-            BeanUtils.copyProperties(source, target);
-            return target;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * 将属性一样的两个类，进行属性值拷贝
      *
@@ -401,7 +390,7 @@ public class BeanUtil {
     /**
      * Retrieve a named bean property value.
      *
-     * @param bean bean
+     * @param bean         bean
      * @param propertyName
      * @return the property value
      */
@@ -432,7 +421,7 @@ public class BeanUtil {
     /**
      * Retrieve a Long bean property value.
      *
-     * @param bean bean
+     * @param bean         bean
      * @param propertyName
      * @return long value
      * @throws NoSuchFieldException
@@ -445,7 +434,7 @@ public class BeanUtil {
         } else if (!(o instanceof Number)) {
             throw new IllegalArgumentException(propertyName + " not an Number");
         }
-        return ((Number)o).longValue();
+        return ((Number) o).longValue();
     }
 
 }
