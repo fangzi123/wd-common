@@ -70,7 +70,6 @@ public class DaoPlugin extends PluginAdapter {
         returnType.addTypeArgument(new FullyQualifiedJavaType(domainObjectName));
         method.setReturnType(returnType);
         method.addBodyLine("return " + domainObjectName + ".class;");
-        method.setReturnType(new FullyQualifiedJavaType("java.lang.Class"));
         compilationUnit.addMethod(method);
 
         compilationUnit.addImportedType("org.springframework.stereotype.Repository");
