@@ -7,8 +7,6 @@ import com.wdcloud.utils.AnnotationUtils;
 import com.wdcloud.utils.Assert;
 import com.wdcloud.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -379,7 +377,7 @@ public class GlobalFactory {
 
         SelfDefinedFunction annotation = AnnotationUtils.getAnnotation(tClass, SelfDefinedFunction.class);
         if (annotation == null) {
-            throw new FactoryException("实现类未定义方法名");
+            throw new FactoryException(tClass + "未添加自定义注解@SelfDefinedFunction");
         } else {
             return new DefinedFunctionInfo(annotation.resourceName(), annotation.functionName());
 
