@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -248,6 +249,16 @@ public class BeanUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static <R> R copyPropertiesBySpring(Object source, Class<R> targetClass) {
+        try {
+            R target = targetClass.getDeclaredConstructor().newInstance();
+            BeanUtils.copyProperties(source, target);
+            return target;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
