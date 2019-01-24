@@ -2,6 +2,7 @@ package com.wdcloud.utils;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -253,5 +254,51 @@ public class MapUtil {
             }
         }
         return map;
+    }
+
+    /**
+     * 解析map形式参数到对象中
+     * @param source
+     * @param targetClass
+     * @param <T>
+     * @return
+     */
+    public static <T> T parseObject(Map<String, String> source, Class<T> targetClass) {
+        try {
+            T target = targetClass.newInstance();
+
+            for (Map.Entry<String, String> entry : source.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                Field field = ReflectionUtils.findField(targetClass, key);
+                if (field == null) {
+                    continue;
+                }
+
+                Class<?> fieldType = field.getType();
+                if (fieldType.isPrimitive()) {
+
+                } else if (fieldType.isArray()) {
+                } else if (fieldType.isAssignableFrom(String.class)) {
+
+                } else if (fieldType.isAssignableFrom(Date.class)) {
+
+                } else if (fieldType.isAssignableFrom(ArrayList.class)) {
+
+                } else if (fieldType.isAssignableFrom(HashMap.class)) {
+
+                } else if (fieldType.isAssignableFrom(HashSet.class)) {
+
+                }
+            }
+
+            return target;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -31,6 +31,7 @@
         <module>server-explorer</module>
         <module>server-frame</module>
         <module>common-dependencies</module>
+        <module>common-mq</module>
     </modules>
     <dependencyManagement>
         <dependencies>

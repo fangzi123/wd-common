@@ -63,7 +63,7 @@ public class DaoPlugin extends PluginAdapter {
         superClass.addTypeArgument(primaryKeyColumn.getFullyQualifiedJavaType());
 
         Method method = new Method();
-        method.setVisibility(JavaVisibility.PUBLIC);
+        method.setVisibility(JavaVisibility.PROTECTED);
         method.addAnnotation("@Override");
         method.setName("getBeanClass");
         FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("java.lang.Class");

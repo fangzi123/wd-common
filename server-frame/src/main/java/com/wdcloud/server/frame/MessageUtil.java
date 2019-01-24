@@ -24,7 +24,7 @@ public class MessageUtil {
     }
 
     public static String getMessage(String key, Locale locale) {
-        return getMessage(key, locale, null);
+        return getMessage(key, locale, (String[]) null);
     }
 
     public static String getMessage(String key, Locale locale, String... args) {
