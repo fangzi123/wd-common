@@ -1,6 +1,8 @@
 package com.wdcloud.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.wdcloud.base.exception.BaseException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
@@ -257,7 +259,7 @@ public class MapUtil {
     }
 
     /**
-     * 解析map形式参数到对象中
+     * 解析map形式参数到对象中，只支持基本类型、字符串、日期类型属性值转换
      * @param source
      * @param targetClass
      * @param <T>
@@ -265,40 +267,10 @@ public class MapUtil {
      */
     public static <T> T parseObject(Map<String, String> source, Class<T> targetClass) {
         try {
-            T target = targetClass.newInstance();
-
-            for (Map.Entry<String, String> entry : source.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-
-                Field field = ReflectionUtils.findField(targetClass, key);
-                if (field == null) {
-                    continue;
-                }
-
-                Class<?> fieldType = field.getType();
-                if (fieldType.isPrimitive()) {
-
-                } else if (fieldType.isArray()) {
-                } else if (fieldType.isAssignableFrom(String.class)) {
-
-                } else if (fieldType.isAssignableFrom(Date.class)) {
-
-                } else if (fieldType.isAssignableFrom(ArrayList.class)) {
-
-                } else if (fieldType.isAssignableFrom(HashMap.class)) {
-
-                } else if (fieldType.isAssignableFrom(HashSet.class)) {
-
-                }
-            }
-
-            return target;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            // fixme
+            return JSON.parseObject(JSON.toJSONString(source), targetClass);
+        } catch (JSONException e) {
+            throw new BaseException(e);
         }
-        return null;
     }
 }
