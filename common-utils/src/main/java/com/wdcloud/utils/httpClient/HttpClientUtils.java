@@ -1,29 +1,33 @@
 package com.wdcloud.utils.httpClient;
 
 import com.wdcloud.utils.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -33,8 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class HttpClientUtils {
-    private static Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
+//    private static Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
 
     protected static HttpClient httpClient = HttpClientFactory.createTLSHttpClient(100, 10);
 
@@ -154,9 +159,9 @@ public class HttpClientUtils {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            logger.debug("Http get request complete, response={}", result);
+            log.debug("Http get request complete, response={}", result);
         } catch (Exception e) {
-            logger.warn("Http get catch an exception, error={}", e.getMessage(), e);
+            log.warn("Http get catch an exception, error={}", e.getMessage(), e);
         } finally {
             try {
                 if (in != null) {
@@ -194,9 +199,9 @@ public class HttpClientUtils {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 result = EntityUtils.toString(httpEntity, encoding);
             }
-            logger.debug("Http post request complete, status={}, response={}", statusCode, result);
+            log.debug("Http post request complete, status={}, response={}", statusCode, result);
         } catch (Exception e) {
-            logger.warn("Http post request catch exception, err={}", e.getMessage(), e);
+            log.warn("Http post request catch exception, err={}", e.getMessage(), e);
             result = null;
         }
         return result;
@@ -208,8 +213,10 @@ public class HttpClientUtils {
 
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(3000).build();
         HttpPost httpPost = new HttpPost(uriAPI);
+
         httpPost.setConfig(requestConfig);
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         multipartEntityBuilder.setCharset(Charset.forName("UTF-8"));
         multipartEntityBuilder.addBinaryBody("file", inputStream, ContentType.MULTIPART_FORM_DATA, fileName);
         HttpEntity httpEntity = multipartEntityBuilder.build();
@@ -228,6 +235,27 @@ public class HttpClientUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Path download(String uri) {
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(3000).build();
+        HttpGet httpGet = new HttpGet(uri);
+        httpGet.setConfig(requestConfig);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            HttpResponse response = httpClient.execute(httpGet);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                InputStream inputStream = response.getEntity().getContent();
+                Path tempFile = Files.createTempFile(null, null);
+
+                Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                return tempFile;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String getResponseContentCharsetName(HttpResponse response) {
