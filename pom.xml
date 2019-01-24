@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wdcloud</groupId>
     <artifactId>wd-common</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -17,7 +17,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
 
-        <wd-dependencies.version>1.0.0-SNAPSHOT</wd-dependencies.version>
+        <wd-dependencies.version>0.0.2-SNAPSHOT</wd-dependencies.version>
     </properties>
     <modules>
         <module>common-base</module>
@@ -64,8 +64,8 @@
                         <!--<arg>-verbose</arg>-->
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>10</source>
+                    <target>10</target>
                 </configuration>
             </plugin>
             <plugin>
