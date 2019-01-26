@@ -66,6 +66,11 @@
             </dependency>
             <dependency>
                 <groupId>com.wdcloud</groupId>
+                <artifactId>common-mq</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wdcloud</groupId>
                 <artifactId>common-mq-model</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
