@@ -110,7 +110,7 @@ public class Response<T> implements Serializable {
     }
 
     public static <T> String returnResponse(Code code, String msg) {
-        return JSON.toJSONString(new Response<>(code, msg), SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(new Response<>(code, null, msg), SerializerFeature.DisableCircularReferenceDetect);
     }
 
     public static <T> String returnDateFormatResponse(Code code, T entity, String dataFormat, String message, String[] params) {
