@@ -14,6 +14,22 @@ public interface IRedisService {
     RedisTemplate<String, String> redisTemplate();
 
     /**
+     * 获取阻塞锁
+     *
+     * @param lockKey key
+     * @param seconds 有效时间（秒） 当传入0时，无失效时间
+     * @return boolean
+     */
+    boolean lock(String lockKey, int seconds);
+
+    /**
+     * 释放锁
+     *
+     * @param lockKey key
+     */
+    void unLock(String lockKey);
+
+    /**
      * SET key value
      * 设置指定 key 的值
      *

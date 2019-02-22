@@ -5,6 +5,7 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,41 @@ public class RedisService implements IRedisService {
     @Override
     public RedisTemplate<String, String> redisTemplate() {
         return redisTemplate;
+    }
+
+    @Override
+    public synchronized boolean lock(String lockKey, int seconds) {
+        if (StringUtils.isEmpty(lockKey)) {
+            log.error("lock parameter error. lockKey={}, seconds={}", lockKey, seconds);
+            return false;
+        }
+        long lockExpireTime = System.currentTimeMillis() + seconds * 1000 + 1;//锁超时时间
+        if (setNx(lockKey, lockExpireTime + "")) { // 获取到锁
+            //成功获取到锁, 设置相关标识
+            expire(lockKey, seconds);
+            RedisLockThread.setThreadMap(Thread.currentThread().getId(), Thread.currentThread());
+            log.info("lock success. lockKey={}, seconds={}", lockKey, seconds);
+            return true;
+        }
+        log.info("lock error. lockKey={}, seconds={}", lockKey, seconds);
+        return false;
+    }
+
+
+    @Override
+    public synchronized void unLock(String lockKey) {
+        if (StringUtils.isEmpty(lockKey)) {
+            log.error("unLock parameter error. lockKey={}", lockKey);
+            return;
+        }
+        // 避免删除非自己获取得到的锁
+        Thread thread = RedisLockThread.getThread(Thread.currentThread().getId());
+        if (thread != null) {
+            del(lockKey);
+            //删除MAP中的线程记录
+            RedisLockThread.removeThread(Thread.currentThread().getId());
+            log.info("unLock success. lockKey={}", lockKey);
+        }
     }
 
     @Override
