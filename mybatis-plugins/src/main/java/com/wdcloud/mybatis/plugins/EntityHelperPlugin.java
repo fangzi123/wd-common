@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * mybatis 插件辅助类，生成实体同时生成静态字段，名字为大写列名，值为列名对应驼峰格式字符串
+ */
 public class EntityHelperPlugin extends PluginAdapter {
 
 
