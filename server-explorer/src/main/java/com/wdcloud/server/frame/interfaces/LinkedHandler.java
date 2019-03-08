@@ -19,5 +19,9 @@ public @interface LinkedHandler {
 
     String dependResourceName();
 
+    String dependFunctionName() default DEF_FUNCTION;
+
     OperateType operateType();
+
+    public final static String DEF_FUNCTION = "";
 }

@@ -1,7 +1,10 @@
 package com.wdcloud.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.wdcloud.base.exception.BaseException;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -253,5 +256,21 @@ public class MapUtil {
             }
         }
         return map;
+    }
+
+    /**
+     * 解析map形式参数到对象中，只支持基本类型、字符串、日期类型属性值转换
+     * @param source
+     * @param targetClass
+     * @param <T>
+     * @return
+     */
+    public static <T> T parseObject(Map<String, String> source, Class<T> targetClass) {
+        try {
+            // fixme
+            return JSON.parseObject(JSON.toJSONString(source), targetClass);
+        } catch (JSONException e) {
+            throw new BaseException(e);
+        }
     }
 }

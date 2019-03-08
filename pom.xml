@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wdcloud</groupId>
     <artifactId>wd-common</artifactId>
-    <version>1.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -17,21 +17,22 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
 
-        <wd-dependencies.version>1.0.0</wd-dependencies.version>
+        <wd-dependencies.version>0.0.1-SNAPSHOT</wd-dependencies.version>
     </properties>
     <modules>
-        <module>common-dependencies</module>
+        <module>common-base</module>
+        <module>common-dao</module>
         <module>common-utils</module>
         <module>mybatis-plugins</module>
         <module>common-envconfig</module>
         <module>common-validation</module>
-        <module>common-dubboclient</module>
-        <module>common-dao</module>
-        <module>common-mq-model</module>
+        <module>common-redis</module>
         <module>server-explorer</module>
         <module>server-frame</module>
-        <module>common-base</module>
-
+        <module>common-dubboclient</module>
+        <module>common-mq</module>
+        <module>common-mq-model</module>
+        <module>common-dependencies</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -64,8 +65,8 @@
                         <!--<arg>-verbose</arg>-->
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
-                    <source>10</source>
-                    <target>10</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -89,7 +90,7 @@
                     <skip>true</skip>
                     <!--illegal-access=permit以允许第三方库的所有反射访问-->
                     <!--<argLine>-->
-                        <!--&#45;&#45;illegal-access=permit-->
+                    <!--&#45;&#45;illegal-access=permit-->
                     <!--</argLine>-->
                 </configuration>
             </plugin>

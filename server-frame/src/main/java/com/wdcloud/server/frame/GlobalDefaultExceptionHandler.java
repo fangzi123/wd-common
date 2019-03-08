@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.wdcloud.server.frame.api.utils.response.Code;
 import com.wdcloud.server.frame.api.utils.response.Response;
 import com.wdcloud.base.exception.BaseException;
+import com.wdcloud.validate.exceptions.ValidateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 
 /**
  * @ClassName GlobalDefaultExceptionHandler
@@ -33,10 +35,12 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     public String exceptionHandler(Exception ex) {
         logger.error(Throwables.getStackTraceAsString(ex));
+        if (ex instanceof ValidateException) {
+            return Response.returnResponse(Code.ERROR, ex.getMessage());
+        }
         if (ex instanceof BaseException) {
             return Response.returnResponse(Code.ERROR, ex.getMessage(), ((BaseException) ex).getI18nMsg());
-        } else {
-            return Response.returnResponse(Code.ERROR, Code.ERROR.name);
         }
+        return Response.returnResponse(Code.ERROR, Code.ERROR.name);
     }
 }

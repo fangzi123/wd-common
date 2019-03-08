@@ -2,9 +2,13 @@ package com.wdcloud.server.frame;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
+import com.wdcloud.server.frame.message.LocaleMessageSourceBean;
 
 /**
  * @ConditionalOnBean:当容器中有指定的Bean的条件下
@@ -28,4 +32,9 @@ public class ServerFrameConfigure {
     @Autowired
     private ServerFrameProperties properties;
 
+    @Bean
+    @ConditionalOnMissingBean(LocaleResolver.class)
+    public LocaleMessageSourceBean localeResolver() {
+        return new LocaleMessageSourceBean();
+    }
 }

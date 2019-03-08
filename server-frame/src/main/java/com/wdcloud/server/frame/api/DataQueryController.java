@@ -52,7 +52,7 @@ public class DataQueryController extends BaseController{
                 resourceName, JSON.toJSONString(paramMap));
         paramMap.put(FrameConstants.LOGIN_USER_ID,getUserId());
 
-        PageQueryResult pageQueryResult = dmDataQueryManager.pageList(resourceName, paramMap, pageIndex, pageSize);
+        PageQueryResult<?> pageQueryResult = dmDataQueryManager.pageList(resourceName, paramMap, pageIndex, pageSize);
         return Response.returnResponse(Code.OK, pageQueryResult, Code.OK.name);
     }
 

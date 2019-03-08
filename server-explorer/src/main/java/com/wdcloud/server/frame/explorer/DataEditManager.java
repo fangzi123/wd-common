@@ -5,6 +5,7 @@ import com.wdcloud.server.frame.exception.ParamErrorException;
 import com.wdcloud.server.frame.explorer.factory.GlobalFactory;
 import com.wdcloud.server.frame.interfaces.IDataLinkedHandle;
 import com.wdcloud.server.frame.interfaces.ISelfDefinedEdit;
+import com.wdcloud.server.frame.interfaces.LinkedHandler;
 import com.wdcloud.server.frame.interfaces.OperateType;
 import com.wdcloud.server.frame.interfaces.info.DataEditInfo;
 import com.wdcloud.server.frame.interfaces.info.LinkedInfo;
@@ -50,7 +51,7 @@ public class DataEditManager {
         log.info("[DataEditor] add resource finish, resource={},  result={}",
                 resourceName, JSON.toJSONString(linkedInfo));
         //联动处理
-        return linkedHandler(resourceName, OperateType.ADD, linkedInfo, userId);
+        return linkedHandler(resourceName, LinkedHandler.DEF_FUNCTION, OperateType.ADD, linkedInfo, userId);
     }
 
     /**
@@ -74,7 +75,7 @@ public class DataEditManager {
         log.info("[DataEditor] update resource finish, resource={}, result={}",
                 resourceName, JSON.toJSONString(linkedInfo));
         //联动处理
-        return linkedHandler(resourceName, OperateType.EDIT, linkedInfo, userId);
+        return linkedHandler(resourceName, LinkedHandler.DEF_FUNCTION, OperateType.EDIT, linkedInfo, userId);
     }
 
     /**
@@ -100,7 +101,7 @@ public class DataEditManager {
         LinkedInfo linkedInfo = selfDefinedEdit.edit(new DataEditInfo(userId, beanJson));
         log.info("[DataEditor] self edit resource finish, resource={}, functionName={},  result={}",
                 resourceName, functionName, JSON.toJSONString(linkedInfo));
-        return linkedHandler(resourceName, OperateType.EDIT, linkedInfo, userId);
+        return linkedHandler(resourceName, functionName, OperateType.SELF_EDIT, linkedInfo, userId);
 
     }
 
@@ -125,7 +126,7 @@ public class DataEditManager {
         log.info("[DataEditor] delete resource finish, resource={},  result={}",
                 resourceName, JSON.toJSONString(linkedInfo));
         //联动处理
-        return linkedHandler(resourceName, OperateType.DELETE, linkedInfo, userId);
+        return linkedHandler(resourceName, LinkedHandler.DEF_FUNCTION, OperateType.DELETE, linkedInfo, userId);
     }
 
     /**
@@ -135,14 +136,14 @@ public class DataEditManager {
      * @param operateType  操作类别
      * @param linkedInfo   联动消息
      */
-    private LinkedInfo linkedHandler(String resourceName, OperateType operateType, LinkedInfo linkedInfo, String userId) {
+    private LinkedInfo linkedHandler(String resourceName, String functionName, OperateType operateType, LinkedInfo linkedInfo, String userId) {
         assert StringUtil.isNotEmpty(resourceName) && operateType != null;
         if (linkedInfo == null) {
             return null;
         }
         log.debug("SPDataEditManager.deletes  资源名称：" + resourceName + "  联动处理");
         linkedInfo.setUserId(userId);
-        for (IDataLinkedHandle dataLinkedHandle : globalFactory.getDataLinkedHandle(resourceName, operateType)) {
+        for (IDataLinkedHandle dataLinkedHandle : globalFactory.getDataLinkedHandle(resourceName, functionName, operateType)) {
             dataLinkedHandle.linkedHandle(linkedInfo);
         }
 
