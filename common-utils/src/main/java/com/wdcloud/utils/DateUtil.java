@@ -210,6 +210,18 @@ public class DateUtil {
         }
     }
 
+    public static Date minuteOperation(Date date, int minutes) {
+        if (date != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            //加分钟
+            cal.add(Calendar.MINUTE, minutes);
+            return cal.getTime();
+        } else {
+            return null;
+        }
+    }
+
     public static String secToTime(int time) {
         String timeStr;
         int hour;
