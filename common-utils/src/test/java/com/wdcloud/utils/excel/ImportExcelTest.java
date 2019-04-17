@@ -3,6 +3,7 @@ package com.wdcloud.utils.excel;
 import com.alibaba.fastjson.JSON;
 import com.wdcloud.utils.excel.annotation.ExcelField;
 import com.wdcloud.utils.excel.annotation.ExcelSheet;
+import com.wdcloud.utils.file.ZipUtils;
 import lombok.Data;
 import org.junit.Test;
 
@@ -39,16 +40,19 @@ public class ImportExcelTest {
     }
 
     public static void main(String[] args) throws Exception {
-        Number d = 13800138001F;
-        System.out.println(d);
-        System.out.println(new BigDecimal(d.toString()));
-        System.out.println(new BigDecimal(new Double(d.toString())));
-
-
-        System.out.println(new BigDecimal("1.0").toString());
-        System.out.println(new BigDecimal(1.0).toString());
-        System.out.println(new BigDecimal(new Double(1.0)).toString());
-        System.out.println(new BigDecimal(new Double(1.0).toString()).toString());
-
+//        Number d = 13800138001F;
+//        System.out.println(d);
+//        System.out.println(new BigDecimal(d.toString()));
+//        System.out.println(new BigDecimal(new Double(d.toString())));
+//
+//
+//        System.out.println(new BigDecimal("1.0").toString());
+//        System.out.println(new BigDecimal(1.0).toString());
+//        System.out.println(new BigDecimal(new Double(1.0)).toString());
+//        System.out.println(new BigDecimal(new Double(1.0).toString()).toString());
+        List<File> files = ZipUtils.unzip(new File("/home/zhangzhen/Desktop/SIS_TEST/courses.zip"));
+        for (File file : files) {
+            System.out.println(file.getAbsolutePath());
+        }
     }
 }
