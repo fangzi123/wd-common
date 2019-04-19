@@ -25,6 +25,14 @@
     </build>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/top.shareall/charset-detector -->
+        <dependency>
+            <groupId>top.shareall</groupId>
+            <artifactId>charset-detector</artifactId>
+            <version>1.0-pre</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.wdcloud</groupId>
             <artifactId>common-base</artifactId>

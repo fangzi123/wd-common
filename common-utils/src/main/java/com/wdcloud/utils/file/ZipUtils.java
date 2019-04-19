@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,9 +86,13 @@ public class ZipUtils {
 //    }
 
     public static List<File> unzip(File file) throws IOException {
+        return unzip(file, null);
+    }
+
+    public static List<File> unzip(File file, String charset) throws IOException {
         Path fileDir = Files.createTempDirectory(null);
 
-        ZipFile zipFile = new ZipFile(file);
+        ZipFile zipFile = new ZipFile(file, Charset.forName(charset == null ? "UTF-8" : charset));
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
             ZipEntry zipEntry = entries.nextElement();
