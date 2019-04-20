@@ -15,4 +15,8 @@ public class MqConstants {
 
     public static final String QUEUE_COURSE_PUBLIC = "queue.course.public";
     public static final String TOPIC_EXCHANGE_COURSE_PUBLIC = "topic.exchange.course.public";
+
+    public static final String QUEUE_SECTION_PUBLIC = "queue.course.public";
+    public static final String TOPIC_EXCHANGE_USER_SECTION_OPRATE= "topic.exchange.user.section.oprate";
+    public static final String QUEUE_USER_SECTION_OPRATE = "queue.user.section.oprate";
 }

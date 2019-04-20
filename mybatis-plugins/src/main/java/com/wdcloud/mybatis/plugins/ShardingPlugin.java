@@ -8,6 +8,9 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
 
 import java.util.List;
 
+/**
+ * 功能
+ */
 public class ShardingPlugin extends PluginAdapter {
 
     @Override
