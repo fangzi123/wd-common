@@ -211,7 +211,7 @@ public class HttpClientUtils {
         String result = "";
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(3000).build();
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(600000).build();
         HttpPost httpPost = new HttpPost(uriAPI);
 
         httpPost.setConfig(requestConfig);
