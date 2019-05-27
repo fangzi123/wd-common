@@ -15,6 +15,9 @@ public enum Code {
 
     REDIRECT(301, "common.redirect"),
     ACCOUNT_OTHER_DEVICE_LOGIN(302, "common.other.device.login"),
+
+    DUPLICATE_NAME(430, "common.name.exists"),
+
     ERROR(500, "common.error");
 
 
