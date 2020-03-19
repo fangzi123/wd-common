@@ -44,6 +44,6 @@ public class GlobalDefaultExceptionHandler {
                 return Response.returnResponse(Code.ERROR, ex.getMessage(), ((BaseException) ex).getI18nMsg());
             }
         }
-        return Response.returnResponse(Code.ERROR, ex.getMessage());
+        return Response.returnResponse(Code.ERROR,  Code.ERROR.name);
     }
 }
